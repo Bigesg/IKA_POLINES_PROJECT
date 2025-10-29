@@ -10,21 +10,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  
   cupertino_icons: ^1.0.8
-
- 
+  url_launcher: ^6.3.0
+  font_awesome_flutter: ^10.7.0  # untuk ikon media sosial
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
 
-  #Tambahkan aset gambar  di sini
   assets:
     - assets/images/
