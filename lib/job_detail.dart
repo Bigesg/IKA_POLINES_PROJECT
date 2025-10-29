@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class JobDetailPage extends StatefulWidget {
   const JobDetailPage({super.key});
@@ -10,6 +11,14 @@ class JobDetailPage extends StatefulWidget {
 class _JobDetailPageState extends State<JobDetailPage>
     with SingleTickerProviderStateMixin {
   bool showProfile = true;
+
+  // --- Fungsi buka URL ---
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw Exception('Tidak dapat membuka $url');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +53,12 @@ class _JobDetailPageState extends State<JobDetailPage>
 
             const SizedBox(height: 20),
 
-            // Isi halaman dengan animasi fade
+            // Isi halaman
             Expanded(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
-                transitionBuilder: (child, anim) => FadeTransition(
-                  opacity: anim,
-                  child: child,
-                ),
+                transitionBuilder: (child, anim) =>
+                    FadeTransition(opacity: anim, child: child),
                 child: SingleChildScrollView(
                   key: ValueKey(showProfile),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -65,34 +72,37 @@ class _JobDetailPageState extends State<JobDetailPage>
         ),
       ),
 
-      // Footer (ikon saja)
+      // Footer (ikon bawah)
       bottomNavigationBar: Container(
         height: 60,
-        decoration: const BoxDecoration(
-          color: Color(0xFF0B2E30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 6,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
+        color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _footerIcon(Icons.home),
-            _footerIcon(Icons.business_center),
-            _footerCenterIcon(),
-            _footerIcon(Icons.document_scanner_outlined),
-            _footerIcon(Icons.person_outline),
+            _footerIcon(Icons.home, false),
+            _footerIcon(Icons.school, false),
+            _footerIcon(Icons.insert_drive_file, false),
+            _footerIcon(Icons.business_center, true), // Aktif
+            _footerIcon(Icons.person, false),
           ],
         ),
       ),
     );
   }
 
-  // Tombol atas (KETERANGAN / PROFIL)
+  // --- Footer icon dengan kondisi aktif ---
+  Widget _footerIcon(IconData icon, bool active) {
+    return IconButton(
+      onPressed: () {},
+      icon: Icon(
+        icon,
+        size: 30,
+        color: active ? const Color(0xFF103C3F) : Colors.grey.shade400,
+      ),
+    );
+  }
+
+  // --- Tombol atas (KETERANGAN / PROFIL) ---
   Widget _topButton(String text, bool active, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -114,28 +124,7 @@ class _JobDetailPageState extends State<JobDetailPage>
     );
   }
 
-  // Footer ikon kecil
-  Widget _footerIcon(IconData icon) {
-    return IconButton(
-      onPressed: () {},
-      icon: Icon(icon, color: Colors.white, size: 26),
-    );
-  }
-
-  // Footer ikon tengah menonjol
-  Widget _footerCenterIcon() {
-    return Container(
-      height: 48,
-      width: 48,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white10,
-      ),
-      child: const Icon(Icons.camera_alt_outlined, color: Colors.white, size: 28),
-    );
-  }
-
-  // Bagian PROFIL
+  // --- Bagian PROFIL ---
   Widget _buildProfilePage() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,18 +141,18 @@ class _JobDetailPageState extends State<JobDetailPage>
         const SizedBox(height: 10),
         _sectionTitle('MISI'),
         _infoCard(
-          '1. Mengembangkan produk dan layanan perangkat lunak yang berkualitas, efisien, dan berdaya saing internasional.\n'
-          '2. Memberdayakan talenta muda Indonesia, khususnya di bidang rekayasa perangkat lunak, untuk tumbuh dan berinovasi.\n'
+          '1. Mengembangkan produk dan layanan perangkat lunak berkualitas.\n'
+          '2. Memberdayakan talenta muda Indonesia.\n'
           '3. Mendorong transformasi digital di berbagai sektor industri.\n'
-          '4. Membentuk budaya kerja kolaboratif, kreatif, dan berorientasi pada solusi.\n'
-          '5. Berkomitmen terhadap kualitas, keamanan, dan kepuasan pelanggan di setiap produk yang dihasilkan.',
+          '4. Membentuk budaya kerja kolaboratif dan kreatif.\n'
+          '5. Berkomitmen terhadap kualitas dan kepuasan pelanggan.',
         ),
         const SizedBox(height: 40),
       ],
     );
   }
 
-  // Header perusahaan
+  // --- Header perusahaan + media sosial aktif ---
   Widget _companyHeader() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -178,11 +167,13 @@ class _JobDetailPageState extends State<JobDetailPage>
             children: const [
               CircleAvatar(radius: 20, backgroundColor: Colors.white),
               SizedBox(width: 10),
-              Text('COMPANY A',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16)),
+              Text(
+                'COMPANY A',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16),
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -197,15 +188,26 @@ class _JobDetailPageState extends State<JobDetailPage>
             style: TextStyle(color: Colors.white70, height: 1.4),
           ),
           const SizedBox(height: 8),
+
+          // Ikon media sosial bisa ditekan
           Row(
-            children: const [
-              Icon(Icons.link, color: Colors.white),
-              SizedBox(width: 8),
-              Icon(Icons.facebook, color: Colors.white),
-              SizedBox(width: 8),
-              Icon(Icons.language, color: Colors.white),
-              SizedBox(width: 8),
-              Icon(Icons.camera_alt_outlined, color: Colors.white),
+            children: [
+              IconButton(
+                onPressed: () => _launchUrl('https://company-a.com'),
+                icon: const Icon(Icons.link, color: Colors.white),
+              ),
+              IconButton(
+                onPressed: () => _launchUrl('https://facebook.com/companyA'),
+                icon: const Icon(Icons.facebook, color: Colors.white),
+              ),
+              IconButton(
+                onPressed: () => _launchUrl('https://twitter.com/companyA'),
+                icon: const Icon(Icons.language, color: Colors.white),
+              ),
+              IconButton(
+                onPressed: () => _launchUrl('https://instagram.com/companyA'),
+                icon: const Icon(Icons.camera_alt_outlined, color: Colors.white),
+              ),
             ],
           ),
         ],
@@ -213,15 +215,14 @@ class _JobDetailPageState extends State<JobDetailPage>
     );
   }
 
-  // Baris info lokasi/karyawan/industri
+  // --- Info tambahan ---
   Widget _infoRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _smallInfoCard(Icons.location_on, 'LOKASI',
-            'Jl. Fantasy no.99,\nSemarang 5555'),
-        _smallInfoCard(Icons.people, 'TOTAL KARYAWAN', '1,234'),
-        _smallInfoCard(Icons.computer, 'BIDANG INDUSTRY', 'Software\nEngineering'),
+        _smallInfoCard(Icons.location_on, 'LOKASI', 'Jl. Fantasy no.99\nSemarang'),
+        _smallInfoCard(Icons.people, 'KARYAWAN', '1,234'),
+        _smallInfoCard(Icons.computer, 'INDUSTRI', 'Software'),
       ],
     );
   }
@@ -278,7 +279,7 @@ class _JobDetailPageState extends State<JobDetailPage>
     );
   }
 
-  // Halaman "KETERANGAN"
+  // --- Halaman "KETERANGAN" ---
   Widget _buildDescriptionPage() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -287,29 +288,27 @@ class _JobDetailPageState extends State<JobDetailPage>
         const SizedBox(height: 16),
         _sectionTitle('DESKRIPSI PEKERJAAN'),
         _infoCard(
-          'Sebagai Software Engineer di Company A, Anda akan berperan penting dalam merancang, mengembangkan, dan memelihara aplikasi berbasis web maupun mobile yang inovatif serta memiliki performa tinggi.\n\n'
-          'Peran ini menuntut kemampuan logika dan analisis yang kuat untuk menghasilkan solusi perangkat lunak yang efisien, aman, dan sesuai dengan kebutuhan pengguna.',
+          'Sebagai Software Engineer di Company A, Anda akan berperan penting dalam merancang, mengembangkan, dan memelihara aplikasi berbasis web maupun mobile.',
         ),
         const SizedBox(height: 10),
         _sectionTitle('JOB REQUIREMENT'),
         _infoCard(
-          '• D3 - S1 Teknik Informatika, Sistem Informasi, Rekayasa Perangkat Lunak, atau bidang terkait.\n'
-          '• Fresh Graduate / 1-2 tahun pengalaman.\n'
-          '• Memiliki kemampuan analisis logika dan pemecahan masalah yang baik.',
+          '• D3 - S1 Informatika, SI, RPL\n'
+          '• Fresh Graduate / 1-2 tahun pengalaman\n'
+          '• Kemampuan analisis dan logika yang baik',
         ),
         const SizedBox(height: 10),
         _sectionTitle('REQUIRED SKILL'),
         _infoCard(
-          '• Bahasa pemrograman: JavaScript / Python / PHP / Java / C#\n'
-          '• Database: MySQL, PostgreSQL, MongoDB\n'
-          '• Familiar dengan Git (GitHub / GitLab)\n'
-          '• Menguasai konsep API (REST / JSON)',
+          '• JavaScript / Python / PHP / Java / C#\n'
+          '• MySQL, PostgreSQL, MongoDB\n'
+          '• Familiar Git, REST API',
         ),
         const SizedBox(height: 10),
         _sectionTitle('TANGGUNG JAWAB'),
         _infoCard(
-          '• Mengembangkan, menguji, dan memelihara aplikasi berbasis web maupun mobile sesuai standar pengembangan perangkat lunak perusahaan.\n'
-          '• Berkolaborasi dengan tim desain, produk, dan QA untuk memastikan performa dan kualitas aplikasi berjalan optimal.',
+          '• Mengembangkan dan memelihara aplikasi\n'
+          '• Berkolaborasi dengan tim desain dan QA',
         ),
         const SizedBox(height: 40),
       ],
