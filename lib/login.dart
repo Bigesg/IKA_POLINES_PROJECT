@@ -1,5 +1,22 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
+// import 'home.dart'; // belum dibuat
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Login Alumni',
+      home: const LoginPage(),
+    );
+  }
+}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-              const HomePage(),
+              const PlaceholderPage(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },
@@ -41,13 +58,20 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDCE5E1), // WARNA BACKGROUND
+      backgroundColor: const Color(0xFFDCE5E1),
       body: Stack(
         children: [
-          _buildBlob(top: -90, left: -100, size: 300, color: const Color(0xFF2F4F4F)), // hijau tua
-          _buildBlob(top: 200, right: -120, size: 280, color: const Color(0xFFDCE5E1)), // hijau muda soft
-          _buildBlob(bottom: -80, left: -100, size: 300, color: const Color(0xFF757575).withOpacity(0.3)), // abu aksen
+          // ===========================
+          // 🔵 BACKGROUND BLOBS
+          // ===========================
+          _buildBlob(top: -120, left: -80, size: 260, color: const Color(0xFF264B46)),
+          _buildBlob(top: 200, right: -100, size: 240, color: const Color(0xFF91A6A3).withOpacity(0.3)),
+          _buildBlob(bottom: -100, left: -80, size: 260, color: const Color(0xFF264B46).withOpacity(0.25)),
+          _buildBlob(bottom: 40, right: 20, size: 80, color: const Color(0xFFDCE5E1)),
 
+          // ===========================
+          // 🧩 LOGIN FORM CONTENT
+          // ===========================
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 35),
@@ -55,29 +79,31 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 30),
-                  Text(
+                  const Text(
                     "Masuk",
                     style: TextStyle(
-                      fontSize: 36,
+                      fontSize: 38,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF212121),
+                      color: Color(0xFF1C2F2D),
                     ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     "Masuk menggunakan akun alumni (KTA) Anda.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
+                    style: TextStyle(fontSize: 14, color: Color(0xFF546E64)),
                   ),
                   const SizedBox(height: 50),
 
+                  // Nomor KTA
                   _buildInputField(
                     controller: _ktaController,
                     icon: Icons.person_outline,
-                    hint: 'Nomor KTA',
+                    hint: 'Nomor KTA/NTM',
                   ),
                   const SizedBox(height: 20),
 
+                  // Kata Sandi
                   _buildInputField(
                     controller: _passwordController,
                     icon: Icons.lock_outline,
@@ -96,16 +122,17 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 30),
 
+                  // Tombol Masuk
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _login,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2F4F4F),
-                        elevation: 4,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: const Color(0xFF264B46),
+                        elevation: 5,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -126,6 +153,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // 🔵 Custom Background Shape
   Widget _buildBlob({
     double? top,
     double? left,
@@ -150,6 +178,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // 🧱 Input Field Template
   Widget _buildInputField({
     required TextEditingController controller,
     required IconData icon,
@@ -188,17 +217,31 @@ class _LoginPageState extends State<LoginPage> {
               : null,
           hintText: hint,
           hintStyle: const TextStyle(color: Color(0xFF757575)),
-          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(color: Color(0xFF2F4F4F), width: 1),
+            borderSide: const BorderSide(color: Color(0xFF264B46), width: 1),
           ),
         ),
       ),
+    );
+  }
+}
+
+// Temporary Placeholder Page
+class PlaceholderPage extends StatelessWidget {
+  const PlaceholderPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Home Placeholder')),
+      body: const Center(child: Text('HomePage belum dibuat')),
     );
   }
 }
