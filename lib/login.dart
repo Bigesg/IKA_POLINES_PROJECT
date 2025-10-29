@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
+import 'background_decor.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -42,87 +43,83 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFDCE5E1), // WARNA BACKGROUND
-      body: Stack(
+      body: BackgroundDecor(
+  type: 'login',
+  child: Center(
+    child: SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 35),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildBlob(top: -90, left: -100, size: 300, color: const Color(0xFF2F4F4F)), // hijau tua
-          _buildBlob(top: 200, right: -120, size: 280, color: const Color(0xFFDCE5E1)), // hijau muda soft
-          _buildBlob(bottom: -80, left: -100, size: 300, color: const Color(0xFF757575).withOpacity(0.3)), // abu aksen
+          const SizedBox(height: 30),
+          const Text(
+            "Masuk",
+            style: TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF212121),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            "Masuk menggunakan akun alumni (KTA) Anda.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
+          ),
+          const SizedBox(height: 50),
 
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 35),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 30),
-                  Text(
-                    "Masuk",
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF212121),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "Masuk menggunakan akun alumni (KTA) Anda.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
-                  ),
-                  const SizedBox(height: 50),
+          _buildInputField(
+            controller: _ktaController,
+            icon: Icons.person_outline,
+            hint: 'Nomor KTA',
+          ),
+          const SizedBox(height: 20),
 
-                  _buildInputField(
-                    controller: _ktaController,
-                    icon: Icons.person_outline,
-                    hint: 'Nomor KTA',
-                  ),
-                  const SizedBox(height: 20),
+          _buildInputField(
+            controller: _passwordController,
+            icon: Icons.lock_outline,
+            hint: 'Kata Sandi',
+            isPassword: true,
+          ),
+          const SizedBox(height: 15),
 
-                  _buildInputField(
-                    controller: _passwordController,
-                    icon: Icons.lock_outline,
-                    hint: 'Kata Sandi',
-                    isPassword: true,
-                  ),
-                  const SizedBox(height: 15),
-
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "Lupa Sandi?",
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _login,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2F4F4F),
-                        elevation: 4,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: const Text(
-                        "Masuk",
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              "Lupa Sandi?",
+              style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
+          const SizedBox(height: 25),
+
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _login,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2F4F4F),
+                elevation: 4,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: const Text(
+                "Masuk",
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
+    ),
+  ),
+),
+,
     );
   }
 
@@ -202,3 +199,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
