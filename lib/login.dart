@@ -2,6 +2,130 @@ import 'package:flutter/material.dart';
 import 'home.dart';
 import 'background_decor.dart';
 
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
+      theme: ThemeData(
+        scaffoldBackgroundColor: Color(0xFFDCE5E1), // ✅ latar awal app
+      ),
+    );
+  }
+}
+
+// ==============================
+// ⏳ SplashScreen Animasi Section
+// ==============================
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  bool _isDotCenter = false;
+  bool _isScaleCircle = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() => _isDotCenter = true);
+
+      Future.delayed(const Duration(milliseconds: 800), () {
+        setState(() => _isScaleCircle = true);
+
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  const LoginPage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) =>
+                      FadeTransition(
+                opacity: CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeIn,
+                ),
+                child: child,
+              ),
+            ),
+          );
+        });
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFDCE5E1), // ✅ konsisten dengan login
+      body: SizedBox(
+        height: double.infinity,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Center(
+              child: AnimatedScale(
+                duration: const Duration(milliseconds: 800),
+                curve: const Cubic(0.58, -0.30, 0.365, 1),
+                scale: _isScaleCircle ? 10 : 1,
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.white,
+                  child: Center(
+                    child: CircleAvatar(
+                      radius: 14,
+                      backgroundColor: _isScaleCircle
+                          ? Colors.white
+                          : const Color(0xFFDCE5E1),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 600),
+              curve: const Cubic(.47, -1.26, .36, 1),
+              left: (MediaQuery.of(context).size.width / 2) -
+                  14 -
+                  (_isDotCenter ? 0 : 80),
+              child: const CircleAvatar(
+                radius: 14,
+                backgroundColor: Colors.white,
+              ),
+            ),
+            if (_isScaleCircle)
+              Center(
+                child: Image.asset(
+                  'assets/images/Logo.png', // ✅ logo alumni kamu
+                  width: 140, // ✅ diperbesar
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.image_not_supported, size: 100),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ==============================
+// 🔐 LoginPage Section
+// ==============================
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -42,9 +166,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDCE5E1), // WARNA BACKGROUND
+      backgroundColor: const Color(0xFFDCE5E1),
       body: BackgroundDecor(
-        type: 'login',
+        type: 'Bold',
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 35),
@@ -67,14 +191,12 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
                 ),
                 const SizedBox(height: 50),
-
                 _buildInputField(
                   controller: _ktaController,
                   icon: Icons.person_outline,
                   hint: 'Nomor KTA',
                 ),
                 const SizedBox(height: 20),
-
                 _buildInputField(
                   controller: _passwordController,
                   icon: Icons.lock_outline,
@@ -82,7 +204,6 @@ class _LoginPageState extends State<LoginPage> {
                   isPassword: true,
                 ),
                 const SizedBox(height: 15),
-
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
@@ -94,7 +215,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 25),
-
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -117,30 +237,6 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBlob({
-    double? top,
-    double? left,
-    double? right,
-    double? bottom,
-    required double size,
-    required Color color,
-  }) {
-    return Positioned(
-      top: top,
-      left: left,
-      right: right,
-      bottom: bottom,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(size * 0.6),
         ),
       ),
     );
