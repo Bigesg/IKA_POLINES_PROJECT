@@ -59,6 +59,7 @@ class _JobDetailPageState extends State<JobDetailPage>
           SafeArea(
             child: Column(
               children: [
+                // Gambar header (logo besar Google)
                 Container(
                   height: 180,
                   width: double.infinity,
@@ -192,22 +193,22 @@ class _JobDetailPageState extends State<JobDetailPage>
         const SizedBox(height: 16),
         _sectionTitle('VISI'),
         _infoCard(
-          'Menjadi perusahaan teknologi terkemuka yang menciptakan solusi perangkat lunak inovatif dan berkelanjutan.',
+          'Mengorganisasi informasi dunia dan membuatnya dapat diakses serta berguna bagi semua orang.',
         ),
         const SizedBox(height: 10),
         _sectionTitle('MISI'),
         _infoCard(
-          '1. Mengembangkan produk berkualitas.\n'
-          '2. Memberdayakan talenta muda.\n'
-          '3. Mendorong transformasi digital.\n'
-          '4. Budaya kerja kolaboratif.\n'
-          '5. Komitmen terhadap kualitas.',
+          '1. Memberikan akses informasi yang cepat dan relevan.\n'
+          '2. Mendorong inovasi teknologi melalui kecerdasan buatan.\n'
+          '3. Memberdayakan individu dan bisnis melalui produk digital.\n'
+          '4. Membangun ekosistem kerja yang kreatif, inklusif, dan kolaboratif.',
         ),
         const SizedBox(height: 40),
       ],
     );
   }
 
+  // --- Bagian HEADER (ABOUT US + ikon sosial) ---
   Widget _companyHeader() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -218,27 +219,67 @@ class _JobDetailPageState extends State<JobDetailPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Logo & Nama Perusahaan
           Row(
-            children: const [
-              CircleAvatar(radius: 20, backgroundColor: Colors.white),
-              SizedBox(width: 10),
-              Text('COMPANY A',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16)),
+            children: [
+              const CircleAvatar(
+                radius: 22,
+                backgroundImage: AssetImage('assets/images/google.jpg'),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Google Company',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16),
+              ),
             ],
           ),
           const SizedBox(height: 10),
-          const Text('ABOUT US',
-              style: TextStyle(
-                  color: Colors.white70, fontWeight: FontWeight.bold)),
+          const Text(
+            'ABOUT US',
+            style:
+                TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 4),
           const Text(
-            'Company A berkomitmen mengembangkan solusi perangkat lunak inovatif untuk pasar global.',
+            'Google Company adalah perusahaan teknologi global yang didirikan pada tahun 1998 oleh Larry Page dan Sergey Brin. '
+            'Misi utama Google adalah mengorganisasi informasi dunia dan membuatnya dapat diakses serta berguna bagi semua orang. '
+            'Produk utama Google meliputi mesin pencari Google Search, Android, Gmail, Chrome, YouTube, dan Google Cloud. '
+            'Google juga dikenal sebagai pelopor inovasi dalam kecerdasan buatan, data center efisien, serta teknologi berkelanjutan.',
             style: TextStyle(color: Colors.white70, height: 1.4),
           ),
+          const SizedBox(height: 12),
+          // Ikon media sosial
+          Row(
+            children: [
+              _socialIcon('assets/images/Linkedin.png',
+                  'https://www.linkedin.com/company/google'),
+              const SizedBox(width: 10),
+              _socialIcon('assets/images/facebook.png',
+                  'https://www.facebook.com/Google'),
+              const SizedBox(width: 10),
+              _socialIcon(
+                  'assets/images/web.png', 'https://about.google/'),
+              const SizedBox(width: 10),
+              _socialIcon('assets/images/instagram_icon.png',
+                  'https://www.instagram.com/google'),
+            ],
+          ),
         ],
+      ),
+    );
+  }
+
+  // --- Widget ikon sosial ---
+  Widget _socialIcon(String assetPath, String url) {
+    return InkWell(
+      onTap: () => _launchUrl(url),
+      child: Image.asset(
+        assetPath,
+        width: 30,
+        height: 30,
       ),
     );
   }
@@ -247,9 +288,10 @@ class _JobDetailPageState extends State<JobDetailPage>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _smallInfoCard(Icons.location_on, 'LOKASI', 'Jl. Fantasy no.99\nSemarang'),
-        _smallInfoCard(Icons.people, 'KARYAWAN', '1,234'),
-        _smallInfoCard(Icons.computer, 'INDUSTRI', 'Software'),
+        _smallInfoCard(Icons.location_on, 'LOKASI',
+            'Mountain View, California\nUSA'),
+        _smallInfoCard(Icons.people, 'KARYAWAN', '190,000+'),
+        _smallInfoCard(Icons.computer, 'INDUSTRI', 'Teknologi Informasi'),
       ],
     );
   }
@@ -302,8 +344,7 @@ class _JobDetailPageState extends State<JobDetailPage>
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(content,
-          style:
-              const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4)),
+          style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4)),
     );
   }
 
@@ -316,27 +357,32 @@ class _JobDetailPageState extends State<JobDetailPage>
         const SizedBox(height: 16),
         _sectionTitle('DESKRIPSI PEKERJAAN'),
         _infoCard(
-          'Sebagai Software Engineer di Company A, Anda akan merancang dan mengembangkan aplikasi berbasis web maupun mobile.',
+          'Sebagai Software Engineer di Google Company, Anda akan berkontribusi dalam merancang, mengembangkan, dan mengoptimalkan produk digital '
+          'yang digunakan oleh miliaran pengguna di seluruh dunia.',
         ),
         const SizedBox(height: 10),
         _sectionTitle('JOB REQUIREMENT'),
         _infoCard(
-          '• D3 - S1 Informatika / RPL\n'
-          '• Fresh Graduate / 1-2 tahun pengalaman\n'
-          '• Kemampuan analisis yang baik',
+          '• S1 Teknik Informatika / Ilmu Komputer\n'
+          '• Pengalaman 1–3 tahun dalam pengembangan software\n'
+          '• Pemahaman mendalam tentang struktur data dan algoritma\n'
+          '• Kemampuan kolaborasi dan komunikasi yang kuat',
         ),
         const SizedBox(height: 10),
         _sectionTitle('REQUIRED SKILL'),
         _infoCard(
-          '• JavaScript / Python / PHP / Java / C#\n'
-          '• MySQL, PostgreSQL, MongoDB\n'
-          '• Git, REST API',
+          '• Bahasa pemrograman: Python, Java, Go, C++\n'
+          '• Cloud computing (Google Cloud, AWS)\n'
+          '• Git, REST API, dan sistem terdistribusi\n'
+          '• Machine Learning dan AI menjadi nilai tambah',
         ),
         const SizedBox(height: 10),
         _sectionTitle('TANGGUNG JAWAB'),
         _infoCard(
-          '• Mengembangkan dan memelihara aplikasi\n'
-          '• Berkolaborasi dengan tim desain dan QA',
+          '• Mengembangkan dan memelihara layanan Google\n'
+          '• Berinovasi untuk meningkatkan kinerja sistem\n'
+          '• Berkolaborasi lintas tim dalam proyek berskala global\n'
+          '• Menjaga keamanan dan privasi data pengguna',
         ),
         const SizedBox(height: 40),
       ],
