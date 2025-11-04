@@ -1,6 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// =======================
+// ENTRY POINT
+// =======================
+void main() {
+  runApp(const JobDetailApp());
+}
+
+class JobDetailApp extends StatelessWidget {
+  const JobDetailApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Job Detail',
+      home: JobDetailPage(),
+    );
+  }
+}
+
+// =======================
+// HALAMAN DETAIL PEKERJAAN
+// =======================
 class JobDetailPage extends StatefulWidget {
   const JobDetailPage({super.key});
 
