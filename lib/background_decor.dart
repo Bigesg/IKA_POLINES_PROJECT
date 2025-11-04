@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// A reusable background decoration widget that adapts to the page type.
-///
-/// Example:
-/// BackgroundDecor(type: 'login', child: YourWidget())
 class BackgroundDecor extends StatelessWidget {
   final Widget child;
   final String type;
@@ -18,32 +14,23 @@ class BackgroundDecor extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Base background
-        Container(color: Colors.white),
-
-        // Dynamic background based on page type
-        if (type == 'Bold') _buildBoldDecor(),
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFf6fffc), Color(0xFFFFFFFF)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        if (type == 'Bold') const AnimatedBoldDecor(),
         if (type == 'Light') _buildLightDecor(),
         if (type == 'default') _buildDefaultDecor(),
-
-        // Main content
         child,
       ],
     );
   }
 
-  /// Login background: more decorative
-  Widget _buildBoldDecor() {
-    return Stack(
-      children: [
-        Positioned(top: -80, right: -60, child: _circle(180, const Color(0xFFd9f3ef))),
-        Positioned(bottom: -100, left: -70, child: _circle(220, const Color(0xFFe8f9f5))),
-        Positioned(top: 180, right: 40, child: _circle(80, const Color(0xFFc5ece5))),
-      ],
-    );
-  }
-
-  /// Home background: clean and simple
   Widget _buildLightDecor() {
     return Stack(
       children: [
@@ -53,7 +40,6 @@ class BackgroundDecor extends StatelessWidget {
     );
   }
 
-  /// Default: minimal background
   Widget _buildDefaultDecor() {
     return Stack(
       children: [
@@ -63,12 +49,121 @@ class BackgroundDecor extends StatelessWidget {
     );
   }
 
-  /// Helper for making circular shapes
   Widget _circle(double size, Color color) {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.3),
+            blurRadius: 30,
+            spreadRadius: 5,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AnimatedBoldDecor extends StatefulWidget {
+  const AnimatedBoldDecor({super.key});
+
+  @override
+  State<AnimatedBoldDecor> createState() => _AnimatedBoldDecorState();
+}
+
+class _AnimatedBoldDecorState extends State<AnimatedBoldDecor> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final progress = Curves.easeOut.transform(_controller.value);
+        return Stack(
+          children: [
+            Positioned(
+              top: -150 + (30 * (1 - progress)),
+              right: -100 + (30 * (1 - progress)),
+              child: Opacity(
+                opacity: progress,
+                child: _circle(300, const Color(0xFFd9f3ef).withOpacity(0.8)),
+              ),
+            ),
+            Positioned(
+              bottom: -180 + (40 * (1 - progress)),
+              left: -120 + (40 * (1 - progress)),
+              child: Opacity(
+                opacity: progress,
+                child: _circle(320, const Color(0xFFe8f9f5).withOpacity(0.9)),
+              ),
+            ),
+            Positioned(
+              top: 200 - (20 * (1 - progress)),
+              right: 50 - (20 * (1 - progress)),
+              child: Opacity(
+                opacity: progress,
+                child: _circle(100, const Color(0xFFc5ece5).withOpacity(0.7)),
+              ),
+            ),
+            Positioned(
+              top: 60 - (15 * (1 - progress)),
+              left: -80 + (15 * (1 - progress)),
+              child: Opacity(
+                opacity: progress,
+                child: _circle(140, const Color(0xFFe0f7f4).withOpacity(0.6)),
+              ),
+            ),
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.4,
+              left: MediaQuery.of(context).size.width * 0.45,
+              child: Opacity(
+                opacity: progress,
+                child: _circle(60, const Color(0xFFd0f0e8).withOpacity(0.5)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _circle(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.3),
+            blurRadius: 30,
+            spreadRadius: 5,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
     );
   }
 }
