@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'job_detail.dart'; // pastikan file ini ada di folder lib/
+import 'welcomepage.dart';
+import 'login.dart';
+import 'register.dart';
+import 'home.dart';
 
 void main() {
   runApp(const IkaPolinesApp());
@@ -19,7 +23,16 @@ class IkaPolinesApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0B2E30)),
         useMaterial3: true,
       ),
-      home: const JobDetailPage(),
+      initialRoute: '/welcome',
+
+      // daftar semua rute
+      routes: {
+        '/welcome': (context) => const SplashWelcomePage(),
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
+        '/home': (context) => const HomePage(),
+        '/job_detail': (context) => const JobDetailPage(),
+      },
     );
   }
 }
