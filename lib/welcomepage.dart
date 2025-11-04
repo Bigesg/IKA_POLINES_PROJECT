@@ -7,7 +7,7 @@ void main() {
   runApp(const MyApp());
 }
 
-// 📌 Aplikasi Utama
+// Aplikasi Utama
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// 📌 Splash Screen sebelum Welcome
+// Splash Screen sebelum Welcome
 class SplashWelcomePage extends StatefulWidget {
   const SplashWelcomePage({super.key});
 
@@ -68,7 +68,7 @@ class _SplashWelcomePageState extends State<SplashWelcomePage> {
     );
   }
 
-  // ✅ Animasi Splash yang rapi & center
+  // Animasi Splash center
   Widget _buildSplashAnimation() {
     return SizedBox(
       width: double.infinity,
@@ -118,7 +118,7 @@ class _SplashWelcomePageState extends State<SplashWelcomePage> {
     );
   }
 
-  // ✅ Halaman Welcome clean
+  // Halaman Welcome
   Widget _buildWelcomeScreen(BuildContext context) {
     return BackgroundDecor(
       type: 'Bold',
@@ -143,7 +143,7 @@ class _SplashWelcomePageState extends State<SplashWelcomePage> {
 
               const SizedBox(height: 60),
 
-              // ✅ Tombol Masuk
+              // Tombol Masuk
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -166,7 +166,7 @@ class _SplashWelcomePageState extends State<SplashWelcomePage> {
               ),
               const SizedBox(height: 18),
 
-              // ✅ Tombol Daftar
+              // Tombol Daftar
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
