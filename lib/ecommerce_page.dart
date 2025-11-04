@@ -5,8 +5,8 @@ import 'ecommerce_detail_page.dart';
 class EcommercePage extends StatelessWidget {
   final List<Koperasi> koperasiList = [
     Koperasi(
-      name: "Koperasi Mhs",
-      image: "assets/images/mhs.png",
+      name: "Koperasi Mahasiswa",
+      image: "assets/images/kopma.png",
       updated: "Updated today",
       description: "Koperasi Mahasiswa Polines melayani kebutuhan harian mahasiswa.",
     ),
@@ -14,102 +14,167 @@ class EcommercePage extends StatelessWidget {
       name: "Koperasi IKA",
       image: "assets/images/ika.png",
       updated: "Updated yesterday",
-      description: "Koperasi IKA menaungi berbagai produk alumni POLINES.",
+      description: "Koperasi IKA menaungi produk dan usaha alumni POLINES, mendukung jejaring bisnis antar alumni.",
     ),
     Koperasi(
       name: "Koperasi Polines",
       image: "assets/images/polines.png",
       updated: "Updated 2 days ago",
-      description: "Koperasi resmi kampus POLINES dengan produk unggulan kampus.",
+      description: "Koperasi Polines merupakan unit resmi yang dinaungi oleh Polines.",
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF2F8F8),
       appBar: AppBar(
-        title: const Text("Ecommerce"),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: Column(
-        children: [
-          // Bagian atas
-          Image.asset("assets/images/temcit.png", height: 180, fit: BoxFit.cover),
-          const SizedBox(height: 8),
-          const Text(
-            "Temcit Chicken\nJl. Gondang Raya, Bulusan",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          "Ecommerce",
+          style: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.w600,
           ),
-          const SizedBox(height: 16),
+        ),
+      ),
+      body: Stack(
+        children: [
+          // 🔹 Background shape atas
+          Positioned(
+            top: -100,
+            left: -60,
+            child: Container(
+              width: 220,
+              height: 220,
+              decoration: const BoxDecoration(
+                color: Color(0xFFCCE7E7),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          // 🔹 Background shape bawah
+          Positioned(
+            bottom: -100,
+            right: -60,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: const BoxDecoration(
+                color: Color(0xFFD8ECEC),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
 
-          // Daftar koperasi
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: koperasiList.length,
-              itemBuilder: (context, index) {
-                final koperasi = koperasiList[index];
-                return GestureDetector(
-                  onTap: () {
-                    // 🎬 Transisi pakai PageRouteBuilder
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        transitionDuration: const Duration(milliseconds: 600),
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            EcommerceDetailPage(koperasi: koperasi),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          const begin = Offset(1.0, 0.0); // dari kanan
-                          const end = Offset.zero;
-                          final tween = Tween(begin: begin, end: end)
-                              .chain(CurveTween(curve: Curves.easeInOut));
-                          return SlideTransition(
-                            position: animation.drive(tween),
-                            child: child,
-                          );
-                        },
+          // 🔹 Konten utama
+          Column(
+            children: [
+              const SizedBox(height: 16),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  "assets/images/ika.png",
+                  height: 180,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "IKA POLINES PARTNER",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              const Text(
+                "GKT Lt.2, Ruang 202, Politeknik Negeri Semarang",
+                style: TextStyle(fontSize: 13, color: Colors.grey),
+              ),
+              const SizedBox(height: 20),
+
+              // 🔹 Daftar koperasi
+              Expanded(
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: koperasiList.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  itemBuilder: (context, index) {
+                    final koperasi = koperasiList[index];
+                    return GestureDetector(
+                      onTap: () {
+                        // 🔸 Animasi transisi ke halaman detail
+                        Navigator.of(context).push(
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 600),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    EcommerceDetailPage(koperasi: koperasi),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              final tween = Tween(
+                                      begin: const Offset(1, 0),
+                                      end: Offset.zero)
+                                  .chain(CurveTween(curve: Curves.easeInOut));
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: 180,
+                        margin: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(18),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(koperasi.image, height: 70),
+                            const SizedBox(height: 10),
+                            Text(
+                              koperasi.name,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              koperasi.updated,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
-                  child: Container(
-                    width: 170,
-                    margin: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(koperasi.image, height: 80),
-                        const SizedBox(height: 8),
-                        Text(
-                          koperasi.name,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          koperasi.updated,
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: const Color(0xFF1C7C7C),
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: ""),
