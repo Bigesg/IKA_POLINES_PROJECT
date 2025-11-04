@@ -1,127 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
 import 'background_decor.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
-      theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFFDCE5E1), // ✅ latar awal app
-      ),
-    );
-  }
-}
-
-// ==============================
-// ⏳ SplashScreen Animasi Section
-// ==============================
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> {
-  bool _isDotCenter = false;
-  bool _isScaleCircle = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() => _isDotCenter = true);
-
-      Future.delayed(const Duration(milliseconds: 800), () {
-        setState(() => _isScaleCircle = true);
-
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  const LoginPage(),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) =>
-                      FadeTransition(
-                opacity: CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeIn,
-                ),
-                child: child,
-              ),
-            ),
-          );
-        });
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFDCE5E1), // ✅ konsisten dengan login
-      body: SizedBox(
-        height: double.infinity,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            Center(
-              child: AnimatedScale(
-                duration: const Duration(milliseconds: 800),
-                curve: const Cubic(0.58, -0.30, 0.365, 1),
-                scale: _isScaleCircle ? 10 : 1,
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.white,
-                  child: Center(
-                    child: CircleAvatar(
-                      radius: 14,
-                      backgroundColor: _isScaleCircle
-                          ? Colors.white
-                          : const Color(0xFFDCE5E1),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 600),
-              curve: const Cubic(.47, -1.26, .36, 1),
-              left: (MediaQuery.of(context).size.width / 2) -
-                  14 -
-                  (_isDotCenter ? 0 : 80),
-              child: const CircleAvatar(
-                radius: 14,
-                backgroundColor: Colors.white,
-              ),
-            ),
-            if (_isScaleCircle)
-              Center(
-                child: Image.asset(
-                  'assets/images/Logo.png', // ✅ logo alumni kamu
-                  width: 140, // ✅ diperbesar
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.image_not_supported, size: 100),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+import 'home.dart'; 
 
 // ==============================
 // 🔐 LoginPage Section
@@ -138,31 +17,38 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
+  // ==============================
+  // 🔁 Login Logic
+  // ==============================
   void _login() {
-    String kta = _ktaController.text.trim();
-    String password = _passwordController.text.trim();
+  final kta = _ktaController.text.trim();
+  final password = _passwordController.text.trim();
 
-    if (kta.isNotEmpty && password.isNotEmpty) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const HomePage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Nomor KTA dan kata sandi wajib diisi!"),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-    }
+  if (kta.isNotEmpty && password.isNotEmpty) {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+          return HomePage(); // Tanpa const
+        },
+        transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Nomor KTA dan kata sandi wajib diisi!"),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
   }
+}
 
+  // ==============================
+  // 🎨 UI Build
+  // ==============================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -242,6 +128,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // ==============================
+  // 🧩 Input Field Builder
+  // ==============================
   Widget _buildInputField({
     required TextEditingController controller,
     required IconData icon,
