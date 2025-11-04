@@ -107,22 +107,6 @@ class _JobDetailPageState extends State<JobDetailPage>
           ),
         ],
       ),
-
-      // Footer (ikon bawah)
-      bottomNavigationBar: Container(
-        height: 60,
-        color: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _footerIcon(Icons.home, false),
-            _footerIcon(Icons.school, false),
-            _footerIcon(Icons.insert_drive_file, false),
-            _footerIcon(Icons.business_center, true),
-            _footerIcon(Icons.person, false),
-          ],
-        ),
-      ),
     );
   }
 
@@ -143,18 +127,6 @@ class _JobDetailPageState extends State<JobDetailPage>
     return CustomPaint(
       size: Size(size, size),
       painter: _TrianglePainter(color),
-    );
-  }
-
-  // --- Footer icon ---
-  Widget _footerIcon(IconData icon, bool active) {
-    return IconButton(
-      onPressed: () {},
-      icon: Icon(
-        icon,
-        size: 30,
-        color: active ? const Color(0xFF103C3F) : Colors.grey.shade400,
-      ),
     );
   }
 
@@ -260,8 +232,7 @@ class _JobDetailPageState extends State<JobDetailPage>
               _socialIcon('assets/images/facebook.png',
                   'https://www.facebook.com/Google'),
               const SizedBox(width: 10),
-              _socialIcon(
-                  'assets/images/web.png', 'https://about.google/'),
+              _socialIcon('assets/images/web.png', 'https://about.google/'),
               const SizedBox(width: 10),
               _socialIcon('assets/images/instagram_icon.png',
                   'https://www.instagram.com/google'),
