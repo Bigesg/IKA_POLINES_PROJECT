@@ -1,9 +1,10 @@
+import 'dart:convert';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'login.dart';
 
-// ==============================
-// 🧾 RegisterPage Section
-// ==============================
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -56,10 +57,19 @@ class _RegisterPageState extends State<RegisterPage> {
     ],
   };
 
+  // ✅ Base URL inline ternary sesuai platform
+  final String baseUrl = kIsWeb
+      ? 'http://172.20.10.4:8000/api'
+      : Platform.isAndroid
+          ? 'http://10.0.2.2:8000/api'
+          : Platform.isIOS
+              ? 'http://localhost:8000/api'
+              : 'http://172.20.10.4:8000/api';
+
   // ==============================
   // 🔁 Register Logic
   // ==============================
-  void _register() {
+  void _register() async {
     if (_namaController.text.isEmpty ||
         _ktaController.text.isEmpty ||
         _selectedJurusan == null ||
@@ -76,10 +86,45 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const RegisterSuccessPage()),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'nama_alumni': _namaController.text,
+          'nomor_kta': _ktaController.text,
+          'jurusan_alumni': _selectedJurusan!,
+          'prodi_alumni': _selectedProdi!,
+          'tahun_lulus': _tahunController.text,
+          'username': _usernameController.text,
+          'password': _passwordController.text,
+        }),
+      );
+
+      final resData = jsonDecode(response.body);
+
+      if ((response.statusCode == 200 || response.statusCode == 201) &&
+          resData['success'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RegisterSuccessPage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(resData['message'] ?? 'Gagal register'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
   }
 
   // ==============================
@@ -116,24 +161,10 @@ class _RegisterPageState extends State<RegisterPage> {
               style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
             ),
             const SizedBox(height: 30),
-
-            // =========================
-            // 🔤 Input Fields
-            // =========================
-            _buildInputField(
-              controller: _namaController,
-              icon: Icons.person_outline,
-              hint: 'Nama Lengkap',
-            ),
+            _buildInputField(controller: _namaController, icon: Icons.person_outline, hint: 'Nama Lengkap'),
             const SizedBox(height: 18),
-
-            _buildInputField(
-              controller: _ktaController,
-              icon: Icons.badge_outlined,
-              hint: 'Nomor KTA',
-            ),
+            _buildInputField(controller: _ktaController, icon: Icons.badge_outlined, hint: 'Nomor KTA'),
             const SizedBox(height: 18),
-
             _buildDropdown(
               hint: 'Pilih Jurusan',
               icon: Icons.school_outlined,
@@ -147,44 +178,20 @@ class _RegisterPageState extends State<RegisterPage> {
               },
             ),
             const SizedBox(height: 18),
-
             _buildDropdown(
               hint: 'Pilih Program Studi',
               icon: Icons.menu_book_outlined,
               value: _selectedProdi,
-              items: _selectedJurusan != null
-                  ? _jurusanProdi[_selectedJurusan]!
-                  : [],
+              items: _selectedJurusan != null ? _jurusanProdi[_selectedJurusan]! : [],
               onChanged: (val) => setState(() => _selectedProdi = val),
             ),
             const SizedBox(height: 18),
-
-            _buildInputField(
-              controller: _tahunController,
-              icon: Icons.calendar_month,
-              hint: 'Tahun Lulus',
-              keyboardType: TextInputType.number,
-            ),
+            _buildInputField(controller: _tahunController, icon: Icons.calendar_month, hint: 'Tahun Lulus', keyboardType: TextInputType.number),
             const SizedBox(height: 18),
-
-            _buildInputField(
-              controller: _usernameController,
-              icon: Icons.account_circle_outlined,
-              hint: 'Nama Pengguna',
-            ),
+            _buildInputField(controller: _usernameController, icon: Icons.account_circle_outlined, hint: 'Nama Pengguna'),
             const SizedBox(height: 18),
-
-            _buildInputField(
-              controller: _passwordController,
-              icon: Icons.lock_outline,
-              hint: 'Kata Sandi',
-              isPassword: true,
-            ),
+            _buildInputField(controller: _passwordController, icon: Icons.lock_outline, hint: 'Kata Sandi', isPassword: true),
             const SizedBox(height: 25),
-
-            // =========================
-            // 🔘 Register Button
-            // =========================
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -193,29 +200,17 @@ class _RegisterPageState extends State<RegisterPage> {
                   backgroundColor: const Color(0xFF2F4F4F),
                   elevation: 4,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 ),
-                child: const Text(
-                  "Daftar",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+                child: const Text("Daftar", style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ),
             const SizedBox(height: 15),
-
             GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const LoginPage()),
-              ),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginPage())),
               child: const Text(
                 "Sudah punya akun? Masuk",
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700),
               ),
             ),
           ],
@@ -224,9 +219,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // ==============================
   // 🧩 Input Field Builder
-  // ==============================
   Widget _buildInputField({
     required TextEditingController controller,
     required IconData icon,
@@ -236,13 +229,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black12.withOpacity(0.1), blurRadius: 12, offset: const Offset(0, 4))],
       ),
       child: TextField(
         controller: controller,
@@ -254,37 +241,21 @@ class _RegisterPageState extends State<RegisterPage> {
           prefixIcon: Icon(icon, color: const Color(0xFF757575)),
           suffixIcon: isPassword
               ? IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                    color: const Color(0xFF757575),
-                  ),
-                  onPressed: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
+                  icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, color: const Color(0xFF757575)),
+                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                 )
               : null,
           hintText: hint,
           hintStyle: const TextStyle(color: Color(0xFF757575)),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: const BorderSide(
-              color: Color(0xFF2F4F4F),
-              width: 1,
-            ),
-          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: const BorderSide(color: Color(0xFF2F4F4F), width: 1)),
         ),
       ),
     );
   }
 
-  // ==============================
   // 🧩 Dropdown Builder
-  // ==============================
   Widget _buildDropdown({
     required String hint,
     required IconData icon,
@@ -294,13 +265,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black12.withOpacity(0.1), blurRadius: 12, offset: const Offset(0, 4))],
       ),
       child: DropdownButtonFormField<String>(
         value: value,
@@ -310,35 +275,21 @@ class _RegisterPageState extends State<RegisterPage> {
           prefixIcon: Icon(icon, color: const Color(0xFF757575)),
           hintText: hint,
           hintStyle: const TextStyle(color: Color(0xFF757575)),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: const BorderSide(
-              color: Color(0xFF2F4F4F),
-              width: 1,
-            ),
-          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: const BorderSide(color: Color(0xFF2F4F4F), width: 1)),
         ),
         icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF757575)),
         dropdownColor: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        items: items
-            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-            .toList(),
+        items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
         onChanged: onChanged,
       ),
     );
   }
 }
 
-// ==============================
 // ✅ Success Page
-// ==============================
 class RegisterSuccessPage extends StatelessWidget {
   const RegisterSuccessPage({super.key});
 
@@ -354,10 +305,7 @@ class RegisterSuccessPage extends StatelessWidget {
             children: [
               const Icon(Icons.check_circle, color: Colors.green, size: 100),
               const SizedBox(height: 20),
-              const Text(
-                "Berhasil!",
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
+              const Text("Berhasil!", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               const Text(
                 "Akun Anda berhasil dibuat.\nSilakan login setelah diverifikasi admin.",
@@ -373,16 +321,10 @@ class RegisterSuccessPage extends StatelessWidget {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 4, 61, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 14, horizontal: 24),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
                 ),
-                child: const Text(
-                  "Ke Halaman Login",
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+                child: const Text("Ke Halaman Login", style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ],
           ),
