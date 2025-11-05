@@ -25,24 +25,39 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      body: Column(
+      body: SafeArea(
+        child: Center(
+          child: SizedBox(
+            width: screenWidth < 500 ? screenWidth : 400, //limit lebar
+            child: Column(
         children: [
           // Header
           Container(
-            color: const Color(0xFF143D40), // warna hijau tua seperti di gambar
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            color: const Color(0xFF143D40),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
             child: Row(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.asset(
-                    'assets/images/profile.jpg',
+                    'assets/images/User_Profile.jpg',
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
-                  ),
-                ),
+                    errorBuilder: (context, error, stackTrace) {
+                      //error gambar
+                      return Container(
+                        width: 80,
+                        height: 80,
+                        color: Colors.grey[400],
+                              child: const Icon(Icons.person, size: 40, color: Colors.white),
+                            );
+                          },
+                        ),
+                      ),
                 const SizedBox(width: 16),
                 const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,37 +92,47 @@ class ProfilePage extends StatelessWidget {
 
           // Daftar menu
           Expanded(
-            child: ListView(
-              children: const [
-                ProfileMenuItem(
-                  icon: Icons.security,
-                  title: 'Ganti Kata Sandi',
+            child: Align(
+              alignment: Aligment.topCenter,
+              child: SizedBox(
+                width: 360,
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                children: const [
+                  ProfileMenuItem(
+                    icon: Icons.security,
+                    title: 'Ganti Kata Sandi',
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.manage_accounts_outlined,
+                    title: 'Pengaturan Akun',
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.chat_bubble_outline,
+                    title: 'Chat dengan Admin',
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.public,
+                    title: 'Tentang IKA Polines',
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.notifications_none,
+                    title: 'Notifikasi',
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.info_outline,
+                    title: 'Tentang Aplikasi',
+                  ),
+                 ],
                 ),
-                ProfileMenuItem(
-                  icon: Icons.manage_accounts_outlined,
-                  title: 'Pengaturan Akun',
-                ),
-                ProfileMenuItem(
-                  icon: Icons.chat_bubble_outline,
-                  title: 'Chat dengan Admin',
-                ),
-                ProfileMenuItem(
-                  icon: Icons.public,
-                  title: 'Tentang IKA Polines',
-                ),
-                ProfileMenuItem(
-                  icon: Icons.notifications_none,
-                  title: 'Notifikasi',
-                ),
-                ProfileMenuItem(
-                  icon: Icons.info_outline,
-                  title: 'Tentang Aplikasi',
-                ),
-              ],
-            ),
+               ),
+              ),
+             ),    
+            ],
+           ),
           ),
-        ],
-      ),
+        ),
+      ),    
     );
   }
 }
@@ -139,3 +164,4 @@ class ProfileMenuItem extends StatelessWidget {
     );
   }
 }
+
