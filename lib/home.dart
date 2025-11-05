@@ -191,7 +191,6 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 28),
 
-            // <<< AWAL REVISI BEASISWA SECTION
             // BEASISWA SECTION
             const Text("Beasiswa",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -199,8 +198,6 @@ class _HomePageState extends State<HomePage> {
 
             // GestureDetector dihapus, karena tombol sudah ada di dalam kartu
             _beasiswaCard(context), // Panggil fungsi baru dengan context
-
-            // <<< AKHIR REVISI BEASISWA SECTION
 
             const SizedBox(height: 28),
 
@@ -229,6 +226,7 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 28),
 
+            // <<< AWAL REVISI LOKER SECTION
             // LOKER
             const Text("Loker Terbuka untuk Kamu!",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -243,7 +241,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 230,
+              height: 250, // <<< Tinggikan SizedBox
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
@@ -253,7 +251,12 @@ class _HomePageState extends State<HomePage> {
                     'Invision',
                     'UI Designer',
                     'Jakarta, Indonesia - Onsite',
-                    ['Remote', 'Contract'],
+                    [
+                      'Remote',
+                      'Contract',
+                      'Junior'
+                    ], // <<< Tag 'Junior' ditambah
+                    '3 hari yang lalu', // <<< Data baru
                   ),
                   _lokerCard(
                     context,
@@ -262,10 +265,12 @@ class _HomePageState extends State<HomePage> {
                     'Digital Marketing',
                     'Jakarta, Indonesia - Onsite',
                     ['Remote', 'Fulltime'],
+                    '3 hari yang lalu', // <<< Data baru
                   ),
                 ],
               ),
             ),
+            // <<< AKHIR REVISI LOKER SECTION
 
             const SizedBox(height: 28),
 
@@ -378,8 +383,6 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
-  // <<< AWAL REVISI _beasiswaCard
-  // === GANTI FUNGSI _beasiswaCard LAMA DENGAN YANG INI ===
   static Widget _beasiswaCard(BuildContext context) => Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -453,7 +456,6 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
-  // --- FUNGSI HELPER BARU UNTUK BARIS METADATA ---
   static Widget _buildMetadataRow(IconData icon, String text) => Row(
         children: [
           Icon(icon, size: 16, color: Colors.black54),
@@ -464,7 +466,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       );
-  // <<< AKHIR REVISI _beasiswaCard
 
   static Widget _bantuanCard(String img, String title, String collected) =>
       Container(
@@ -486,8 +487,17 @@ class _HomePageState extends State<HomePage> {
         ]),
       );
 
-  static Widget _lokerCard(BuildContext context, String img, String comp,
-          String pos, String loc, List<String> tags) =>
+  // <<< AWAL REVISI _lokerCard
+  // === GANTI FUNGSI _lokerCard LAMA DENGAN YANG INI ===
+  static Widget _lokerCard(
+    BuildContext context,
+    String img,
+    String comp,
+    String pos,
+    String loc,
+    List<String> tags,
+    String timeAgo, // <<< Parameter baru
+  ) =>
       Container(
         width: 200,
         margin: const EdgeInsets.only(right: 14),
@@ -496,62 +506,99 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(14),
           boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
         ),
-        clipBehavior: Clip.hardEdge,
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Image.asset(img, width: 45, height: 45),
-            const SizedBox(height: 8),
-            Text(comp,
-                style:
-                    const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-            Text(pos, style: const TextStyle(fontSize: 13)),
-            Text(loc, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-            const SizedBox(height: 6),
-            Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: tags
-                    .map((t) => Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade300),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text(t,
-                              style: const TextStyle(
-                                  fontSize: 11, color: Colors.black54)),
-                        ))
-                    .toList()),
-            const Spacer(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => DetailLokerPage(
-                        company: comp,
-                        position: pos,
-                        location: loc,
-                        tags: tags,
-                        image: img,
-                      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // --- Logo Perusahaan dengan Latar Belakang ---
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100, // Latar abu-abu muda
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Image.asset(img,
+                    width: 30, height: 30), // Ukuran logo di dalam container
+              ),
+              const SizedBox(height: 10),
+
+              // --- Info Pekerjaan (Urutan & Gaya diubah) ---
+              Text(comp, // Nama Perusahaan (kecil, abu-abu)
+                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              const SizedBox(height: 2),
+              Text(pos, // Posisi (besar, bold)
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(loc, // Lokasi
+                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              const SizedBox(height: 8),
+
+              // --- Tags ---
+              Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  children: tags
+                      .map((t) => Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                                color: Colors.grey.shade50, // Latar tag abu-abu
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Text(t,
+                                style: const TextStyle(
+                                    fontSize: 11, color: Colors.black54)),
+                          ))
+                      .toList()),
+
+              const Spacer(), // Mendorong baris bawah ke bottom
+
+              // --- Baris Bawah (Baru) ---
+              Row(
+                children: [
+                  Text(
+                    timeAgo, // Teks "3 hari yang lalu"
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const Spacer(),
+                  // Tombol "Detail"
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                  );
-                },
-                child: const Text("Detail",
-                    style: TextStyle(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DetailLokerPage(
+                            company: comp,
+                            position: pos,
+                            location: loc,
+                            tags: tags,
+                            image: img,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Detail",
+                      style: TextStyle(
                         color: Colors.teal,
                         fontSize: 12,
-                        fontWeight: FontWeight.w600)),
-              ),
-            )
-          ]),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       );
+  // <<< AKHIR REVISI _lokerCard
 
   static Widget _alumniCard(String img, String title, String desc) => Container(
         margin: const EdgeInsets.only(bottom: 14),
@@ -646,10 +693,19 @@ class DetailLokerPage extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
             children: [
-              Image.asset(image, width: 70, height: 70),
+              // <<< REVISI: Logo di dalam container abu-abu
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Image.asset(image, width: 54, height: 54),
+              ),
               const SizedBox(width: 16),
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(company,
+                // <<< REVISI: Urutan teks diubah
+                Text(company, // Perusahaan dulu
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold)),
                 Text(location, style: const TextStyle(color: Colors.grey)),
