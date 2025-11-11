@@ -24,11 +24,10 @@ class _JobListPageState extends State<JobListPage> {
         "tags": ["Tech", "AI", "Cloud"],
         "description":
             "Join Google as a Software Engineer in Semarang! We're looking for innovative minds to build and optimize software solutions that drive real-world impact.",
-        "isGoogle": true,
       },
       {
         "company": "Company B",
-        "logo": "assets/images/logo.jpg",
+        "logo": "assets/images/companyb.jpg",
         "position": "Product Designer",
         "location": "Jakarta",
         "type": "Full-Time",
@@ -36,11 +35,10 @@ class _JobListPageState extends State<JobListPage> {
         "tags": ["UI/UX", "Creative"],
         "description":
             "Join Company B as a Product Designer in Jakarta! We're looking for creative minds to craft intuitive digital experiences.",
-        "isGoogle": false,
       },
       {
         "company": "Company C",
-        "logo": "assets/images/logo.jpg",
+        "logo": "assets/images/companyc.jpg",
         "position": "Content Creator",
         "location": "Semarang",
         "type": "Part-Time",
@@ -48,7 +46,6 @@ class _JobListPageState extends State<JobListPage> {
         "tags": ["Media", "Writing"],
         "description":
             "Join Company C as a Part-Time Content Creator in Semarang! Create engaging content, work with a great team, and grow your skills with flexible hours.",
-        "isGoogle": false,
       },
     ];
 
@@ -59,7 +56,7 @@ class _JobListPageState extends State<JobListPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            // ===== BACKGROUND PATTERN LIGHT =====
+            // ===== LATAR BELAKANG LINGKARAN HIASAN =====
             Positioned(
               top: -80,
               left: -60,
@@ -89,7 +86,7 @@ class _JobListPageState extends State<JobListPage> {
             SingleChildScrollView(
               child: Column(
                 children: [
-                  // ===== HEADER DENGAN BACK BUTTON =====
+                  // ===== HEADER DENGAN BACK BUTTON TANPA SHADOW =====
                   Stack(
                     children: [
                       Container(
@@ -98,9 +95,6 @@ class _JobListPageState extends State<JobListPage> {
                         padding: const EdgeInsets.symmetric(vertical: 26),
                         child: Column(
                           children: [
-                            Image.asset("assets/images/logo.jpg",
-                                height: 60, width: 60),
-                            const SizedBox(height: 12),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 24),
@@ -122,21 +116,14 @@ class _JobListPageState extends State<JobListPage> {
                         ),
                       ),
 
-                      // ===== ICON BACK BUTTON SEPERTI DI JOB_DETAIL =====
+                      // ===== ICON BACK (SEPERTI DI JOB_DETAIL.TART) =====
                       Positioned(
-                        top: 20,
-                        left: 16,
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
-                              shape: BoxShape.circle,
-                            ),
-                            padding: const EdgeInsets.all(8),
-                            child: const Icon(Icons.arrow_back,
-                                color: Colors.white, size: 26),
-                          ),
+                        top: 16,
+                        left: 8,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back,
+                              color: Colors.white, size: 28),
+                          onPressed: () => Navigator.pop(context),
                         ),
                       ),
                     ],
@@ -167,7 +154,7 @@ class _JobListPageState extends State<JobListPage> {
                     ),
                   ),
 
-                  // ===== JOB LIST =====
+                  // ===== DAFTAR LOKER =====
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     child: Column(
@@ -183,7 +170,7 @@ class _JobListPageState extends State<JobListPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // HEADER PERUSAHAAN
+                              // NAMA PERUSAHAAN
                               Row(
                                 children: [
                                   ClipRRect(
@@ -229,7 +216,7 @@ class _JobListPageState extends State<JobListPage> {
                               ),
                               const SizedBox(height: 6),
 
-                              // INFO LOKASI, WAKTU, TIPE
+                              // INFO
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 4,
@@ -289,10 +276,9 @@ class _JobListPageState extends State<JobListPage> {
                                       height: 1.3),
                                 ),
                               ),
-
                               const SizedBox(height: 8),
 
-                              // ===== TOMBOL DETAIL =====
+                              // TOMBOL DETAIL
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton(
@@ -312,8 +298,7 @@ class _JobListPageState extends State<JobListPage> {
                                           company: job['company'],
                                           position: job['position'],
                                           location: job['location'],
-                                          tags:
-                                              List<String>.from(job['tags']),
+                                          tags: List<String>.from(job['tags']),
                                           image: job['logo'],
                                         ),
                                       ),
