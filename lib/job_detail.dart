@@ -2,30 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // =======================
-// ENTRY POINT
-// =======================
-void main() {
-  runApp(const JobDetailApp());
-}
-
-class JobDetailApp extends StatelessWidget {
-  const JobDetailApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Job Detail',
-      home: JobDetailPage(),
-    );
-  }
-}
-
-// =======================
 // HALAMAN DETAIL PEKERJAAN
 // =======================
 class JobDetailPage extends StatefulWidget {
-  const JobDetailPage({super.key});
+  final String company;
+  final String position;
+  final String location;
+  final List<String> tags;
+  final String image;
+
+  const JobDetailPage({
+    super.key,
+    required this.company,
+    required this.position,
+    required this.location,
+    required this.tags,
+    required this.image,
+  });
 
   @override
   State<JobDetailPage> createState() => _JobDetailPageState();
@@ -46,6 +39,11 @@ class _JobDetailPageState extends State<JobDetailPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(widget.position),
+        backgroundColor: const Color(0xFF1E5A5D),
+        foregroundColor: Colors.white,
+      ),
       body: Stack(
         children: [
           // --- Corak dekoratif background ---
@@ -82,13 +80,13 @@ class _JobDetailPageState extends State<JobDetailPage>
           SafeArea(
             child: Column(
               children: [
-                // Gambar header (logo besar Google)
+                // Gambar header
                 Container(
                   height: 180,
                   width: double.infinity,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/google.jpg'),
+                      image: AssetImage(widget.image),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -217,14 +215,14 @@ class _JobDetailPageState extends State<JobDetailPage>
           // Logo & Nama Perusahaan
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 22,
-                backgroundImage: AssetImage('assets/images/google.jpg'),
+                backgroundImage: AssetImage(widget.image),
               ),
               const SizedBox(width: 10),
-              const Text(
-                'Google Company',
-                style: TextStyle(
+              Text(
+                widget.company,
+                style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16),
@@ -239,10 +237,7 @@ class _JobDetailPageState extends State<JobDetailPage>
           ),
           const SizedBox(height: 4),
           const Text(
-            'Google Company adalah perusahaan teknologi global yang didirikan pada tahun 1998 oleh Larry Page dan Sergey Brin. '
-            'Misi utama Google adalah mengorganisasi informasi dunia dan membuatnya dapat diakses serta berguna bagi semua orang. '
-            'Produk utama Google meliputi mesin pencari Google Search, Android, Gmail, Chrome, YouTube, dan Google Cloud. '
-            'Google juga dikenal sebagai pelopor inovasi dalam kecerdasan buatan, data center efisien, serta teknologi berkelanjutan.',
+            'Perusahaan ini adalah salah satu pemimpin di bidang teknologi modern, fokus pada inovasi dan pengembangan solusi digital yang berdampak positif bagi masyarakat.',
             style: TextStyle(color: Colors.white70, height: 1.4),
           ),
           const SizedBox(height: 12),
@@ -282,10 +277,9 @@ class _JobDetailPageState extends State<JobDetailPage>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _smallInfoCard(Icons.location_on, 'LOKASI',
-            'Mountain View, California\nUSA'),
-        _smallInfoCard(Icons.people, 'KARYAWAN', '190,000+'),
-        _smallInfoCard(Icons.computer, 'INDUSTRI', 'Teknologi Informasi'),
+        _smallInfoCard(Icons.location_on, 'LOKASI', widget.location),
+        _smallInfoCard(Icons.work, 'POSISI', widget.position),
+        _smallInfoCard(Icons.business, 'PERUSAHAAN', widget.company),
       ],
     );
   }
@@ -351,8 +345,7 @@ class _JobDetailPageState extends State<JobDetailPage>
         const SizedBox(height: 16),
         _sectionTitle('DESKRIPSI PEKERJAAN'),
         _infoCard(
-          'Sebagai Software Engineer di Google Company, Anda akan berkontribusi dalam merancang, mengembangkan, dan mengoptimalkan produk digital '
-          'yang digunakan oleh miliaran pengguna di seluruh dunia.',
+          'Sebagai ${widget.position} di ${widget.company}, Anda akan berkontribusi dalam merancang, mengembangkan, dan mengoptimalkan produk digital yang digunakan oleh jutaan pengguna di seluruh dunia.',
         ),
         const SizedBox(height: 10),
         _sectionTitle('JOB REQUIREMENT'),
@@ -369,14 +362,6 @@ class _JobDetailPageState extends State<JobDetailPage>
           '• Cloud computing (Google Cloud, AWS)\n'
           '• Git, REST API, dan sistem terdistribusi\n'
           '• Machine Learning dan AI menjadi nilai tambah',
-        ),
-        const SizedBox(height: 10),
-        _sectionTitle('TANGGUNG JAWAB'),
-        _infoCard(
-          '• Mengembangkan dan memelihara layanan Google\n'
-          '• Berinovasi untuk meningkatkan kinerja sistem\n'
-          '• Berkolaborasi lintas tim dalam proyek berskala global\n'
-          '• Menjaga keamanan dan privasi data pengguna',
         ),
         const SizedBox(height: 40),
       ],
