@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'job_detail.dart'; // pastikan file ini ada di folder lib/
 import 'welcomepage.dart';
 import 'login.dart';
 import 'register.dart';
@@ -25,13 +24,12 @@ class IkaPolinesApp extends StatelessWidget {
       ),
       initialRoute: '/welcome',
 
-      // daftar semua rute
+      // daftar rute (hapus job_detail karena butuh parameter)
       routes: {
         '/welcome': (context) => const SplashWelcomePage(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/home': (context) => const HomePage(),
-        '/job_detail': (context) => const JobDetailPage(),
       },
     );
   }
