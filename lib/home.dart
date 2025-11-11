@@ -1,32 +1,26 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'loker.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-// ================== ROOT APP ==================
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 'const' dihapus dari MaterialApp untuk menambahkan theme
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
-      // <<< REVISI 1: Menetapkan tema global untuk aplikasi
       theme: ThemeData(
-        // Mengatur latar belakang default semua Scaffold (halaman) menjadi putih
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: const Color.fromARGB(255, 69, 44, 44),
       ),
-
-      home: const MainLayout(), // 'const' dipindahkan ke widget home
+      home: const MainLayout(),
     );
   }
 }
 
-// ================== MAIN LAYOUT (FOOTER TETAP) ==================
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
 
@@ -41,7 +35,7 @@ class _MainLayoutState extends State<MainLayout> {
     HomePage(),
     EventPage(),
     BeasiswaPage(),
-    LokerPage(),
+    JobListPage(),
     ProfilPage(),
   ];
 
@@ -67,7 +61,6 @@ class _MainLayoutState extends State<MainLayout> {
   }
 }
 
-// ================== HOME PAGE ==================
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -78,6 +71,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _bannerIndex = 0;
   late Timer _timer;
+  bool _isHovered = false;
 
   final List<String> _banners = [
     'assets/images/banner_beasiswa.png',
@@ -109,7 +103,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // HEADER
             Row(
               children: [
                 const CircleAvatar(
@@ -131,10 +124,8 @@ class _HomePageState extends State<HomePage> {
                 const Icon(Icons.notifications_none, size: 28),
               ],
             ),
-
             const SizedBox(height: 18),
 
-            // BANNER OTOMATIS
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
               child: AnimatedSwitcher(
@@ -150,74 +141,49 @@ class _HomePageState extends State<HomePage> {
             ),
 
             const SizedBox(height: 22),
-
-            // EVENT SECTION
             const Text("Jangan Lewatkan!",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
+
             SizedBox(
-              height: 290, // Tinggi disesuaikan untuk kartu baru
+              height: 290,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  // GestureDetector dihapus, navigasi dipindah ke dalam _eventCard
-                  _eventCard(
-                    context, // Pass context
-                    'assets/images/event_sarasehan.png',
-                    'Sarasehan Alumni',
-                    '8 Oktober 2025',
-                    'Kumpul bareng alumni lintas angkatan.',
-                    const EventPage(), // Pass halaman tujuan
-                  ),
-                  _eventCard(
-                    context,
-                    'assets/images/event_elektro.png',
-                    'Elektro Expo 2025',
-                    '12 Oktober 2025',
-                    'Ajang karya mahasiswa & alumni elektro Polines.',
-                    const EventPage(),
-                  ),
-                  _eventCard(
-                    context,
-                    'assets/images/event_webinar.png',
-                    'Webinar Karir: CV & Interview',
-                    '15 Oktober 2025',
-                    'Tips jitu dari praktisi HRD alumni Polines.',
-                    const EventPage(),
-                  ),
+                  _eventCard(context, 'assets/images/event_sarasehan.png',
+                      'Sarasehan Alumni', '8 Oktober 2025',
+                      'Kumpul bareng alumni lintas angkatan.', const EventPage()),
+                  _eventCard(context, 'assets/images/event_elektro.png',
+                      'Elektro Expo 2025', '12 Oktober 2025',
+                      'Ajang karya mahasiswa & alumni elektro Polines.', const EventPage()),
+                  _eventCard(context, 'assets/images/event_webinar.png',
+                      'Webinar Karir: CV & Interview', '15 Oktober 2025',
+                      'Tips jitu dari praktisi HRD alumni Polines.', const EventPage()),
                 ],
               ),
             ),
 
             const SizedBox(height: 28),
-
-            // BEASISWA SECTION
             const Text("Beasiswa",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
 
-            // GestureDetector dihapus, karena tombol sudah ada di dalam kartu
-            _beasiswaCard(context), // Panggil fungsi baru dengan context
-
+            _beasiswaCard(context),
             const SizedBox(height: 28),
 
-            // BANTUAN
             const Text("Bantuan",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
+
             SizedBox(
               height: 190,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _bantuanCard(
-                      'assets/images/bantuan_mekah.png',
-                      'Bantu Muslim Indonesia ke Mekkah',
-                      'Rp 24.000.000 terkumpul'),
-                  _bantuanCard(
-                      'assets/images/bantuan_pelosok.png',
-                      'Bantu warga pelosok untuk makan siang',
-                      'Rp 10.000.000 terkumpul'),
+                  _bantuanCard('assets/images/bantuan_mekah.png',
+                      'Bantu Muslim Indonesia ke Mekkah', 'Rp 24.000.000 terkumpul'),
+                  _bantuanCard('assets/images/bantuan_pelosok.png',
+                      'Bantu warga pelosok untuk makan siang', 'Rp 10.000.000 terkumpul'),
                   _bantuanCard('assets/images/bantuan_anak.png',
                       'Bantu anak-anak tersenyum', 'Rp 8.000.000 terkumpul'),
                 ],
@@ -225,59 +191,50 @@ class _HomePageState extends State<HomePage> {
             ),
 
             const SizedBox(height: 28),
-
-            // <<< AWAL REVISI LOKER SECTION
-            // LOKER
-            const Text("Loker Terbuka untuk Kamu!",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                _kategoriButton("Design", true),
-                _kategoriButton("Business", false),
-                _kategoriButton("Marketing", false),
-                _kategoriButton("Tech", false),
-              ],
+            const Text(
+              "Loker Terbuka untuk Kamu!",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 250, // <<< Tinggikan SizedBox
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _lokerCard(
+            const SizedBox(height: 12),
+
+            MouseRegion(
+              onEnter: (_) => setState(() => _isHovered = true),
+              onExit: (_) => setState(() => _isHovered = false),
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
                     context,
-                    'assets/images/loker_ui_card.png',
-                    'Invision',
-                    'UI Designer',
-                    'Jakarta, Indonesia - Onsite',
-                    [
-                      'Remote',
-                      'Contract',
-                      'Junior'
-                    ], // <<< Tag 'Junior' ditambah
-                    '3 hari yang lalu', // <<< Data baru
+                    MaterialPageRoute(builder: (_) => const JobListPage()),
+                  );
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: _isHovered
+                        ? const Color(0xFF00695C)
+                        : const Color(0xFF004D40),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  _lokerCard(
-                    context,
-                    'assets/images/loker_marketing.png',
-                    'Telegram',
-                    'Digital Marketing',
-                    'Jakarta, Indonesia - Onsite',
-                    ['Remote', 'Fulltime'],
-                    '3 hari yang lalu', // <<< Data baru
+                  child: const Text(
+                    "Informasi selengkapnya, klik di sini",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      decoration: TextDecoration.none,
+                    ),
                   ),
-                ],
+                ),
               ),
             ),
-            // <<< AKHIR REVISI LOKER SECTION
 
             const SizedBox(height: 28),
-
-            // DARI ALUMNI
             const Text("Dari Alumni untuk Alumni",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
+
             _alumniCard('assets/images/beasiswa_alumni.png', 'IKA Polines Care',
                 'Gerakan solidaritas alumni Polines membantu sesama.'),
             _alumniCard('assets/images/ea_coffee.png', 'EA Coffee Shop',
@@ -288,95 +245,50 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // === COMPONENTS ===
-  static Widget _kategoriButton(String text, bool active) => Container(
-        margin: const EdgeInsets.only(right: 8),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: active ? Colors.teal : Colors.white,
-            foregroundColor: active ? Colors.white : Colors.black,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            elevation: 0,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-          onPressed: () {},
-          child: Text(text, style: const TextStyle(fontSize: 13)),
-        ),
-      );
-
-  static Widget _eventCard(
-    BuildContext context,
-    String img,
-    String title,
-    String date,
-    String desc,
-    Widget pageToNavigate, // Halaman tujuan
-  ) =>
+  static Widget _eventCard(BuildContext context, String img, String title,
+      String date, String desc, Widget pageToNavigate) =>
       Container(
-        width: 170, // Lebar kartu
+        width: 170,
         margin: const EdgeInsets.only(right: 14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
         ),
-        padding: const EdgeInsets.all(12), // Padding di dalam kartu
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar dengan border radius
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(img,
-                  height: 100,
-                  width: 146, // 170 (lebar) - 24 (padding L/R)
-                  fit: BoxFit.cover),
+              child: Image.asset(img, height: 100, width: 146, fit: BoxFit.cover),
             ),
             const SizedBox(height: 10),
-
-            // Judul
             Text(title,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-
-            // Tanggal (warna diubah)
-            Text(date,
-                style: const TextStyle(
-                    fontSize: 12, color: Colors.teal)), // Diubah ke teal
-
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            Text(date, style: const TextStyle(fontSize: 12, color: Colors.teal)),
             const SizedBox(height: 4),
-
-            // Deskripsi
             Text(desc,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 12)),
-
-            const Spacer(), // Mendorong tombol ke bawah
-
-            // Tombol "Selengkapnya"
+            const Spacer(),
             SizedBox(
-              width: double.infinity, // Lebar tombol penuh
+              width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color(0xFF004D40), // Warna dark teal (hijau tua)
-                  foregroundColor: Colors.white, // Teks putih
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                ),
+                    backgroundColor: const Color(0xFF004D40),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(vertical: 8)),
                 onPressed: () {
-                  // Aksi navigasi
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => pageToNavigate),
                   );
                 },
-                child:
-                    const Text("Selengkapnya", style: TextStyle(fontSize: 12)),
+                child: const Text("Selengkapnya", style: TextStyle(fontSize: 12)),
               ),
             ),
           ],
@@ -391,91 +303,68 @@ class _HomePageState extends State<HomePage> {
           boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start, // Biar gambar rata atas
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Kolom Teks (Kiri) ---
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Judul
                   const Text(
                     "Beasiswa Alumni Polines Peduli (Need-Based)",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   const SizedBox(height: 6),
-
-                  // Deskripsi
                   const Text(
                     "Bantuan biaya pendidikan bagi mahasiswa aktif Polines yang membutuhkan dukungan finansial.",
                     style: TextStyle(fontSize: 12, color: Colors.black87),
                   ),
                   const SizedBox(height: 12),
-
-                  // --- Metadata dengan Ikon ---
-                  _buildMetadataRow(Icons.person_outline, "25 Penerima"),
+                  const Text("25 Penerima",
+                      style: TextStyle(fontSize: 12, color: Colors.black54)),
                   const SizedBox(height: 4),
-                  _buildMetadataRow(Icons.calendar_today_outlined,
-                      "8 October - 30 October 2025"),
+                  const Text("8 October - 30 October 2025",
+                      style: TextStyle(fontSize: 12, color: Colors.black54)),
                   const SizedBox(height: 4),
-                  _buildMetadataRow(
-                      Icons.apartment_outlined, "Forum Alumni Polines"),
+                  const Text("Forum Alumni Polines",
+                      style: TextStyle(fontSize: 12, color: Colors.black54)),
                   const SizedBox(height: 12),
-
-                  // --- Tombol Detail ---
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color(0xFF004D40), // Warna dark teal
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8),
-                    ),
+                        backgroundColor: const Color(0xFF004D40),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 8)),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const BeasiswaPage()),
                       );
                     },
-                    child: const Text("Detail", style: TextStyle(fontSize: 12)),
+                    child:
+                        const Text("Detail", style: TextStyle(fontSize: 12)),
                   ),
                 ],
               ),
             ),
-
-            // --- Gambar (Kanan) ---
             const SizedBox(width: 12),
             ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset('assets/images/beasiswa_alumni.png',
-                    width: 100, height: 100, fit: BoxFit.cover)),
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset('assets/images/beasiswa_alumni.png',
+                  width: 100, height: 100, fit: BoxFit.cover),
+            ),
           ],
         ),
       );
 
-  static Widget _buildMetadataRow(IconData icon, String text) => Row(
-        children: [
-          Icon(icon, size: 16, color: Colors.black54),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
-          ),
-        ],
-      );
-
-  static Widget _bantuanCard(String img, String title, String collected) =>
-      Container(
+  static Widget _bantuanCard(String img, String title, String collected) => Container(
         width: 160,
         margin: const EdgeInsets.only(right: 12),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child:
-                  Image.asset(img, width: 160, height: 90, fit: BoxFit.cover)),
+              child: Image.asset(img, width: 160, height: 90, fit: BoxFit.cover)),
           const SizedBox(height: 6),
           Text(title,
               maxLines: 2,
@@ -486,119 +375,6 @@ class _HomePageState extends State<HomePage> {
               style: const TextStyle(fontSize: 12, color: Colors.teal))
         ]),
       );
-
-  // <<< AWAL REVISI _lokerCard
-  // === GANTI FUNGSI _lokerCard LAMA DENGAN YANG INI ===
-  static Widget _lokerCard(
-    BuildContext context,
-    String img,
-    String comp,
-    String pos,
-    String loc,
-    List<String> tags,
-    String timeAgo, // <<< Parameter baru
-  ) =>
-      Container(
-        width: 200,
-        margin: const EdgeInsets.only(right: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // --- Logo Perusahaan dengan Latar Belakang ---
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100, // Latar abu-abu muda
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Image.asset(img,
-                    width: 30, height: 30), // Ukuran logo di dalam container
-              ),
-              const SizedBox(height: 10),
-
-              // --- Info Pekerjaan (Urutan & Gaya diubah) ---
-              Text(comp, // Nama Perusahaan (kecil, abu-abu)
-                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
-              const SizedBox(height: 2),
-              Text(pos, // Posisi (besar, bold)
-                  style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 4),
-              Text(loc, // Lokasi
-                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
-              const SizedBox(height: 8),
-
-              // --- Tags ---
-              Wrap(
-                  spacing: 6,
-                  runSpacing: 4,
-                  children: tags
-                      .map((t) => Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                                color: Colors.grey.shade50, // Latar tag abu-abu
-                                border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Text(t,
-                                style: const TextStyle(
-                                    fontSize: 11, color: Colors.black54)),
-                          ))
-                      .toList()),
-
-              const Spacer(), // Mendorong baris bawah ke bottom
-
-              // --- Baris Bawah (Baru) ---
-              Row(
-                children: [
-                  Text(
-                    timeAgo, // Teks "3 hari yang lalu"
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                  const Spacer(),
-                  // Tombol "Detail"
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => DetailLokerPage(
-                            company: comp,
-                            position: pos,
-                            location: loc,
-                            tags: tags,
-                            image: img,
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      "Detail",
-                      style: TextStyle(
-                        color: Colors.teal,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      );
-  // <<< AKHIR REVISI _lokerCard
 
   static Widget _alumniCard(String img, String title, String desc) => Container(
         margin: const EdgeInsets.only(bottom: 14),
@@ -611,8 +387,7 @@ class _HomePageState extends State<HomePage> {
         child: Row(children: [
           ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child:
-                  Image.asset(img, width: 70, height: 70, fit: BoxFit.cover)),
+              child: Image.asset(img, width: 70, height: 70, fit: BoxFit.cover)),
           const SizedBox(width: 14),
           Expanded(
               child: Column(
@@ -623,123 +398,29 @@ class _HomePageState extends State<HomePage> {
                         fontSize: 14, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(desc,
-                    style:
-                        const TextStyle(fontSize: 12, color: Colors.black87)),
+                    style: const TextStyle(fontSize: 12, color: Colors.black87)),
               ]))
         ]),
       );
 }
 
-// ================== HALAMAN TAMBAHAN ==================
 class EventPage extends StatelessWidget {
   const EventPage({super.key});
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text("Event")),
-        body: const Center(child: Text("Halaman Event")),
-      );
+  Widget build(BuildContext context) =>
+      Scaffold(appBar: AppBar(title: const Text("Event")), body: const Center(child: Text("Halaman Event")));
 }
 
 class BeasiswaPage extends StatelessWidget {
   const BeasiswaPage({super.key});
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text("Beasiswa")),
-        body: const Center(child: Text("Halaman Beasiswa")),
-      );
-}
-
-class LokerPage extends StatelessWidget {
-  const LokerPage({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text("Loker")),
-        body: const Center(child: Text("Daftar Loker Lengkap")),
-      );
+  Widget build(BuildContext context) =>
+      Scaffold(appBar: AppBar(title: const Text("Beasiswa")), body: const Center(child: Text("Halaman Beasiswa")));
 }
 
 class ProfilPage extends StatelessWidget {
   const ProfilPage({super.key});
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text("Profil")),
-        body: const Center(child: Text("Halaman Profil")),
-      );
-}
-
-// ================== DETAIL LOKER PAGE ==================
-class DetailLokerPage extends StatelessWidget {
-  final String company;
-  final String position;
-  final String location;
-  final List<String> tags;
-  final String image;
-
-  const DetailLokerPage({
-    super.key,
-    required this.company,
-    required this.position,
-    required this.location,
-    required this.tags,
-    required this.image,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(position), backgroundColor: Colors.teal),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(
-            children: [
-              // <<< REVISI: Logo di dalam container abu-abu
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Image.asset(image, width: 54, height: 54),
-              ),
-              const SizedBox(width: 16),
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                // <<< REVISI: Urutan teks diubah
-                Text(company, // Perusahaan dulu
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
-                Text(location, style: const TextStyle(color: Colors.grey)),
-              ]),
-            ],
-          ),
-          const SizedBox(height: 20),
-          const Text("Deskripsi Pekerjaan",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          const Text(
-            "Bertanggung jawab untuk mendesain antarmuka aplikasi yang ramah pengguna dan sesuai identitas perusahaan.",
-          ),
-          const SizedBox(height: 16),
-          const Text("Persyaratan",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          const Text("• Minimal pengalaman 1 tahun di bidang terkait.\n"
-              "• Menguasai Figma, Adobe XD.\n"
-              "• Mampu bekerja dalam tim."),
-          const Spacer(),
-          Center(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 14)),
-              onPressed: () {},
-              child: const Text("Lamar Sekarang",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
-            ),
-          )
-        ]),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      Scaffold(appBar: AppBar(title: const Text("Profil")), body: const Center(child: Text("Halaman Profil")));
 }
