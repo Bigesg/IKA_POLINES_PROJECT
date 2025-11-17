@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'loker.dart'; // Pastikan file loker.dart ada di folder yang sama
+import 'loker.dart'; // <<< PENTING: Pastikan file loker.dart ada
 
 void main() {
   runApp(const MyApp());
 }
 
+// ================== ROOT APP ==================
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -13,14 +14,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white, // Latar belakang putih
-      ),
+      theme: ThemeData(scaffoldBackgroundColor: Colors.white),
       home: const MainLayout(),
     );
   }
 }
 
+// ================== MAIN LAYOUT ==================
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
 
@@ -35,7 +35,7 @@ class _MainLayoutState extends State<MainLayout> {
     HomePage(),
     EventPage(),
     BeasiswaPage(),
-    JobListPage(),
+    JobListPage(), // <<< Mengambil dari file loker.dart
     ProfilPage(),
   ];
 
@@ -49,6 +49,8 @@ class _MainLayoutState extends State<MainLayout> {
         unselectedItemColor: Colors.grey,
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
+        backgroundColor: Colors.white,
+        elevation: 0,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Event'),
@@ -61,6 +63,7 @@ class _MainLayoutState extends State<MainLayout> {
   }
 }
 
+// ================== HOME PAGE ==================
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -119,6 +122,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: Colors.black, // Warna teks hitam
                       ),
                     ),
                     Text(
@@ -128,9 +132,14 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 const Spacer(),
-                const Icon(Icons.notifications_none, size: 28),
+                const Icon(
+                  Icons.notifications_none,
+                  size: 28,
+                  color: Colors.black,
+                ),
               ],
             ),
+
             const SizedBox(height: 18),
 
             // BANNER
@@ -149,13 +158,18 @@ class _HomePageState extends State<HomePage> {
             ),
 
             const SizedBox(height: 22),
+
+            // EVENT SECTION
             const Text(
               "Jangan Lewatkan!",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ), // Warna teks hitam
             ),
             const SizedBox(height: 12),
 
-            // EVENT SECTION
             SizedBox(
               height: 290,
               child: ListView(
@@ -190,60 +204,77 @@ class _HomePageState extends State<HomePage> {
             ),
 
             const SizedBox(height: 28),
+
+            // BEASISWA SECTION
             const Text(
               "Beasiswa",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
             const SizedBox(height: 12),
 
             _beasiswaCard(context),
+
             const SizedBox(height: 28),
 
-            // === BANTUAN SECTION (YANG DIPERBAIKI) ===
+            // BANTUAN SECTION (Dengan Kontak)
             const Text(
               "Bantuan",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
             const SizedBox(height: 12),
 
             SizedBox(
-              height: 190,
+              height: 200,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
                   _bantuanCard(
                     'assets/images/bantuan_mekah.png',
                     'Bantu Muslim Indonesia ke Mekkah',
-                    '0812-3456-7890', // Nomor kontak
+                    '0812-3456-7890',
                   ),
                   _bantuanCard(
                     'assets/images/bantuan_pelosok.png',
                     'Bantu warga pelosok untuk makan siang',
-                    '0812-9876-5432', // Nomor kontak
+                    '0812-3456-7891',
                   ),
                   _bantuanCard(
                     'assets/images/bantuan_anak.png',
                     'Bantu anak-anak tersenyum',
-                    '0813-5555-6666', // Nomor kontak
+                    '0812-3456-7892',
                   ),
                 ],
               ),
             ),
 
             const SizedBox(height: 28),
+
+            // LOKER SECTION (TOMBOL NAVIGASI)
             const Text(
               "Loker Terbuka untuk Kamu!",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
             const SizedBox(height: 12),
 
-            // TOMBOL LOKER
             MouseRegion(
               onEnter: (_) => setState(() => _isHovered = true),
               onExit: (_) => setState(() => _isHovered = false),
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () {
+                  // Navigasi ke JobListPage yang ada di loker.dart
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const JobListPage()),
@@ -266,7 +297,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       "Informasi selengkapnya, klik di sini",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.white, // Teks Putih
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         decoration: TextDecoration.none,
@@ -278,9 +309,15 @@ class _HomePageState extends State<HomePage> {
             ),
 
             const SizedBox(height: 28),
+
+            // ALUMNI SECTION
             const Text(
               "Dari Alumni untuk Alumni",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
             const SizedBox(height: 12),
 
@@ -328,7 +365,11 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 10),
         Text(
           title,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
         Text(date, style: const TextStyle(fontSize: 12, color: Colors.teal)),
         const SizedBox(height: 4),
@@ -336,7 +377,7 @@ class _HomePageState extends State<HomePage> {
           desc,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12, color: Colors.black87),
         ),
         const Spacer(),
         SizedBox(
@@ -379,7 +420,11 @@ class _HomePageState extends State<HomePage> {
             children: [
               const Text(
                 "Beasiswa Alumni Polines Peduli (Need-Based)",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
               ),
               const SizedBox(height: 6),
               const Text(
@@ -444,11 +489,16 @@ class _HomePageState extends State<HomePage> {
     ],
   );
 
-  // <<< REVISI: _bantuanCard menampilkan nomor telepon dengan ikon
-  static Widget _bantuanCard(String img, String title, String contact) =>
+  static Widget _bantuanCard(String img, String title, String contactPhone) =>
       Container(
         width: 160,
         margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -456,7 +506,7 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(12),
               child: Image.asset(
                 img,
-                width: 160,
+                width: double.infinity,
                 height: 90,
                 fit: BoxFit.cover,
               ),
@@ -470,22 +520,25 @@ class _HomePageState extends State<HomePage> {
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 height: 1.3,
+                color: Colors.black,
               ),
             ),
-            const SizedBox(height: 6), // Jarak sedikit ke kontak
+            const Spacer(),
+            // Bagian Kontak
             Row(
               children: [
-                const Icon(Icons.phone_in_talk, size: 14, color: Colors.teal),
+                Icon(
+                  Icons.phone_outlined,
+                  size: 14,
+                  color: Colors.grey.shade700,
+                ),
                 const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    contact, // Menampilkan nomor telepon
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.teal,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+                Text(
+                  contactPhone,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -518,6 +571,7 @@ class _HomePageState extends State<HomePage> {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 4),
@@ -533,6 +587,7 @@ class _HomePageState extends State<HomePage> {
   );
 }
 
+// ================== HALAMAN TAMBAHAN ==================
 class EventPage extends StatelessWidget {
   const EventPage({super.key});
   @override
