@@ -1,5 +1,46 @@
 import 'package:flutter/material.dart';
-import 'job_detail.dart';
+
+// ================= DATA LOKER (GLOBAL) =================
+// Data ini ditaruh di luar kelas agar bisa diakses oleh main.dart
+final List<Map<String, dynamic>> globalJobList = [
+  {
+    'image': 'assets/images/loker_ui_card.png', // Pastikan aset ini ada
+    'company': 'Invision',
+    'position': 'UI Designer',
+    'location': 'Jakarta, Indonesia - Onsite',
+    'tags': ['Remote', 'Contract', 'Junior'],
+    'timeAgo': '3 hari yang lalu',
+    'type': 'Full-Time',
+    'days': '3 days ago',
+    'description':
+        'Kami mencari UI Designer yang bersemangat untuk menciptakan antarmuka yang indah dan fungsional.',
+  },
+  {
+    'image': 'assets/images/loker_marketing.png', // Pastikan aset ini ada
+    'company': 'Telegram',
+    'position': 'Digital Marketing',
+    'location': 'Jakarta, Indonesia - Onsite',
+    'tags': ['Remote', 'Fulltime'],
+    'timeAgo': '3 hari yang lalu',
+    'type': 'Full-Time',
+    'days': '3 days ago',
+    'description':
+        'Bergabunglah dengan tim pemasaran kami untuk mengembangkan strategi digital yang inovatif.',
+  },
+  {
+    'image': 'assets/images/google.jpg', // Pastikan aset ini ada
+    'company': 'Google',
+    'position': 'Software Engineer',
+    'location': 'Semarang, Indonesia - Onsite',
+    'tags': ['Fulltime', 'Senior', 'Tech'],
+    'timeAgo': '1 hari yang lalu',
+    'type': 'Full-Time',
+    'days': '1 days ago',
+    'description':
+        'Membangun solusi backend yang skalabel untuk jutaan pengguna.',
+  },
+];
+// =======================================================
 
 class JobListPage extends StatefulWidget {
   const JobListPage({super.key});
@@ -13,42 +54,6 @@ class _JobListPageState extends State<JobListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> jobs = [
-      {
-        "company": "Google Company",
-        "logo": "assets/images/google.jpg",
-        "position": "Software Engineer",
-        "location": "Semarang",
-        "type": "Full-Time",
-        "days": "3 days ago",
-        "tags": ["Tech", "AI", "Cloud"],
-        "description":
-            "Join Google as a Software Engineer in Semarang! We're looking for innovative minds to build and optimize software solutions that drive real-world impact.",
-      },
-      {
-        "company": "Company B",
-        "logo": "assets/images/companyb.jpg",
-        "position": "Product Designer",
-        "location": "Jakarta",
-        "type": "Full-Time",
-        "days": "5 days ago",
-        "tags": ["UI/UX", "Creative"],
-        "description":
-            "Join Company B as a Product Designer in Jakarta! We're looking for creative minds to craft intuitive digital experiences.",
-      },
-      {
-        "company": "Company C",
-        "logo": "assets/images/companyc.jpg",
-        "position": "Content Creator",
-        "location": "Semarang",
-        "type": "Part-Time",
-        "days": "10 days ago",
-        "tags": ["Media", "Writing"],
-        "description":
-            "Join Company C as a Part-Time Content Creator in Semarang! Create engaging content, work with a great team, and grow your skills with flexible hours.",
-      },
-    ];
-
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -56,7 +61,7 @@ class _JobListPageState extends State<JobListPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            // ===== LATAR BELAKANG LINGKARAN HIASAN =====
+            // Hiasan Latar
             Positioned(
               top: -80,
               left: -60,
@@ -82,58 +87,62 @@ class _JobListPageState extends State<JobListPage> {
               ),
             ),
 
-            // ===== KONTEN UTAMA =====
             SingleChildScrollView(
               child: Column(
                 children: [
-                  // ===== HEADER DENGAN BACK BUTTON TANPA SHADOW =====
-                  Stack(
-                    children: [
-                      Container(
-                        color: const Color(0xFF234F4D),
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 26),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 24),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF517E7B),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Text(
-                                "FIND JOBS HERE",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  letterSpacing: 1.2,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                ),
+                  // Header
+                  Container(
+                    color: const Color(0xFF234F4D),
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 26),
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 24,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF517E7B),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              "FIND JOBS HERE",
+                              style: TextStyle(
+                                color: Colors.white,
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-
-                      // ===== ICON BACK (SEPERTI DI JOB_DETAIL.TART) =====
-                      Positioned(
-                        top: 16,
-                        left: 8,
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_back,
-                              color: Colors.white, size: 28),
-                          onPressed: () => Navigator.pop(context),
+                        Positioned(
+                          top: 0,
+                          bottom: 0,
+                          left: 8,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
 
-                  // ===== DROPDOWN SORT =====
+                  // Dropdown
                   Container(
                     color: const Color(0xFFE8F0EF),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: DropdownButton<String>(
@@ -141,186 +150,287 @@ class _JobListPageState extends State<JobListPage> {
                         underline: Container(),
                         items: const [
                           DropdownMenuItem(
-                              value: "newest", child: Text("Newest")),
+                            value: "newest",
+                            child: Text("Newest"),
+                          ),
                           DropdownMenuItem(
-                              value: "latest", child: Text("Latest")),
+                            value: "latest",
+                            child: Text("Latest"),
+                          ),
                         ],
-                        onChanged: (value) {
-                          setState(() {
-                            selectedSort = value!;
-                          });
-                        },
+                        onChanged: (value) =>
+                            setState(() => selectedSort = value!),
                       ),
                     ),
                   ),
 
-                  // ===== DAFTAR LOKER =====
+                  // List Loker (Menggunakan Data Global)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     child: Column(
-                      children: jobs.map((job) {
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 14),
-                          padding: const EdgeInsets.all(14),
-                          width: screenWidth * 0.92,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF234F4D),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // NAMA PERUSAHAAN
-                              Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(6),
-                                    child: Image.asset(
-                                      job['logo'],
-                                      height: 36,
-                                      width: 36,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      job['company'],
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-
-                              // POSISI
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF517E7B),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  job['position'],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-
-                              // INFO
-                              Wrap(
-                                spacing: 10,
-                                runSpacing: 4,
-                                children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.location_on,
-                                          size: 14, color: Colors.white),
-                                      const SizedBox(width: 3),
-                                      Text(job['location'],
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11)),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.access_time,
-                                          size: 14, color: Colors.white),
-                                      const SizedBox(width: 3),
-                                      Text(job['type'],
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11)),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.calendar_today,
-                                          size: 14, color: Colors.white),
-                                      const SizedBox(width: 3),
-                                      Text(job['days'],
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-
-                              // DESKRIPSI
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF517E7B),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  job['description'],
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      height: 1.3),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-
-                              // TOMBOL DETAIL
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.teal.shade700,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 22, vertical: 10),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => JobDetailPage(
-                                          company: job['company'],
-                                          position: job['position'],
-                                          location: job['location'],
-                                          tags: List<String>.from(job['tags']),
-                                          image: job['logo'],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Detail",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
+                      children: globalJobList.map((job) {
+                        return _buildJobCard(context, job, screenWidth);
                       }).toList(),
                     ),
                   ),
                 ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildJobCard(
+    BuildContext context,
+    Map<String, dynamic> job,
+    double width,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(14),
+      width: width * 0.92,
+      decoration: BoxDecoration(
+        color: const Color(0xFF234F4D),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Image.asset(
+                  job['image'],
+                  width: 30,
+                  height: 30,
+                  errorBuilder: (c, e, s) => const Icon(Icons.work),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  job['company'],
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFF517E7B),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              job['position'],
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 10,
+            runSpacing: 4,
+            children: [
+              _buildIconText(
+                Icons.location_on,
+                job['location'].split('-')[0].trim(),
+              ),
+              _buildIconText(Icons.access_time, job['type']),
+              _buildIconText(Icons.calendar_today, job['days']),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF517E7B),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              job['description'],
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                height: 1.3,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal.shade700,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => JobDetailPage(jobData: job),
+                  ),
+                );
+              },
+              child: const Text(
+                "Detail",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIconText(IconData icon, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: Colors.white),
+        const SizedBox(width: 3),
+        Text(text, style: const TextStyle(color: Colors.white, fontSize: 11)),
+      ],
+    );
+  }
+}
+
+// HALAMAN DETAIL (Dipanggil dari Home dan Loker List)
+class JobDetailPage extends StatelessWidget {
+  final Map<String, dynamic> jobData;
+
+  const JobDetailPage({super.key, required this.jobData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(jobData['position']),
+        backgroundColor: const Color(0xFF234F4D),
+        foregroundColor: Colors.white,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset(
+                  jobData['image'],
+                  width: 80,
+                  height: 80,
+                  errorBuilder: (c, e, s) => const Icon(Icons.work, size: 60),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: Text(
+                jobData['position'],
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: Text(
+                "${jobData['company']} • ${jobData['location']}",
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Divider(),
+            const SizedBox(height: 16),
+            const Text(
+              "Deskripsi Pekerjaan",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              jobData['description'],
+              style: const TextStyle(height: 1.5, color: Colors.black87),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              "Persyaratan",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "• Minimal pengalaman 1 tahun di bidang terkait.\n• Menguasai Figma, Adobe XD.\n• Mampu bekerja dalam tim.",
+              style: TextStyle(height: 1.5, color: Colors.black87),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              "Tags",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: (jobData['tags'] as List)
+                  .map(
+                    (t) => Chip(
+                      label: Text(t),
+                      backgroundColor: Colors.teal.shade50,
+                    ),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 40),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {},
+                child: const Text(
+                  "Lamar Sekarang",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ],
