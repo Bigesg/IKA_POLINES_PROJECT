@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'loker.dart'; // <<< PENTING: Pastikan file loker.dart ada
+import 'loker.dart'; // <<< Pastikan ini terhubung ke file loker.dart
 
 void main() {
   runApp(const MyApp());
@@ -35,7 +35,7 @@ class _MainLayoutState extends State<MainLayout> {
     HomePage(),
     EventPage(),
     BeasiswaPage(),
-    JobListPage(), // <<< Mengambil dari file loker.dart
+    JobListPage(), // Mengambil dari file loker.dart
     ProfilPage(),
   ];
 
@@ -74,12 +74,35 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _bannerIndex = 0;
   late Timer _timer;
-  bool _isHovered = false;
 
   final List<String> _banners = [
     'assets/images/banner_beasiswa.png',
     'assets/images/event_sarasehan.png',
     'assets/images/event_elektro.png',
+  ];
+
+  // DATA LOKER UNTUK HOME PAGE (Sama strukturnya dengan loker.dart)
+  final List<Map<String, dynamic>> jobsPreview = [
+    {
+      "company": "Invision",
+      "logo": "assets/images/loker_ui_card.png", // Ganti sesuai aset Anda
+      "position": "UI Designer",
+      "location": "Jakarta, Indonesia - Onsite",
+      "type": "Full-Time",
+      "days": "3 days ago",
+      "tags": ["Remote", "Contract", "Junior"],
+      "description": "Mencari UI Designer yang bersemangat.",
+    },
+    {
+      "company": "Telegram",
+      "logo": "assets/images/loker_marketing.png", // Ganti sesuai aset Anda
+      "position": "Digital Marketing",
+      "location": "Jakarta, Indonesia - Onsite",
+      "type": "Full-Time",
+      "days": "3 days ago",
+      "tags": ["Remote", "Contract"],
+      "description": "Bergabung dengan tim marketing kami.",
+    },
   ];
 
   @override
@@ -122,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black, // Warna teks hitam
+                        color: Colors.black,
                       ),
                     ),
                     Text(
@@ -166,7 +189,7 @@ class _HomePageState extends State<HomePage> {
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
-              ), // Warna teks hitam
+              ),
             ),
             const SizedBox(height: 12),
 
@@ -220,7 +243,7 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 28),
 
-            // BANTUAN SECTION (Dengan Kontak)
+            // BANTUAN SECTION
             const Text(
               "Bantuan",
               style: TextStyle(
@@ -257,57 +280,59 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 28),
 
-            // LOKER SECTION (TOMBOL NAVIGASI)
-            const Text(
-              "Loker Terbuka untuk Kamu!",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+            // ===== LOKER SECTION (DESAIN BARU) =====
+            // Judul dan Panah
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Loker Terbuka untuk Kamu!",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const JobListPage()),
+                    );
+                  },
+                ),
+              ],
             ),
             const SizedBox(height: 12),
 
-            MouseRegion(
-              onEnter: (_) => setState(() => _isHovered = true),
-              onExit: (_) => setState(() => _isHovered = false),
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                onTap: () {
-                  // Navigasi ke JobListPage yang ada di loker.dart
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const JobListPage()),
-                  );
+            // Kategori Button (Hiasan seperti di gambar)
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _kategoriButton("Design", true),
+                  _kategoriButton("Business", false),
+                  _kategoriButton("Marketing", false),
+                  _kategoriButton("Technology", false),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // ListView Loker Horizontal
+            SizedBox(
+              height: 260, // Tinggi kartu loker
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: jobsPreview.length,
+                itemBuilder: (context, index) {
+                  return _lokerCard(context, jobsPreview[index]);
                 },
-                child: AnimatedContainer(
-                  width: double.infinity,
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _isHovered
-                        ? const Color(0xFF00695C)
-                        : const Color(0xFF004D40),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Informasi selengkapnya, klik di sini",
-                      style: TextStyle(
-                        color: Colors.white, // Teks Putih
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
 
+            // ======================================
             const SizedBox(height: 28),
 
             // ALUMNI SECTION
@@ -338,6 +363,160 @@ class _HomePageState extends State<HomePage> {
   }
 
   // === COMPONENTS ===
+
+  // 1. KATEGORI BUTTON (Seperti di Gambar)
+  static Widget _kategoriButton(String text, bool active) => Container(
+    margin: const EdgeInsets.only(right: 8),
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: active ? const Color(0xFF3F5C6E) : Colors.white,
+        foregroundColor: active ? Colors.white : Colors.black,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: active
+              ? BorderSide.none
+              : BorderSide(color: Colors.grey.shade300),
+        ),
+      ),
+      onPressed: () {},
+      child: Text(text, style: const TextStyle(fontSize: 12)),
+    ),
+  );
+
+  // 2. KARTU LOKER (Desain Persis Gambar)
+  static Widget _lokerCard(BuildContext context, Map<String, dynamic> job) {
+    return Container(
+      width: 220,
+      margin: const EdgeInsets.only(
+        right: 14,
+        bottom: 10,
+      ), // bottom 10 for shadow
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Logo
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF5F0), // Warna background cream logo
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Image.asset(
+              job['logo'],
+              width: 32,
+              height: 32,
+              errorBuilder: (c, e, s) =>
+                  const Icon(Icons.work, color: Colors.grey),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Nama Perusahaan
+          Text(
+            job['company'],
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 4),
+
+          // Posisi (Besar & Bold)
+          Text(
+            job['position'],
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 4),
+
+          // Lokasi
+          Text(
+            job['location'],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          ),
+          const SizedBox(height: 16),
+
+          // Tags (Outlined)
+          Row(
+            children: (job['tags'] as List)
+                .take(2) // Ambil max 2 tag agar muat
+                .map(
+                  (tag) => Container(
+                    margin: const EdgeInsets.only(right: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      tag,
+                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          const Spacer(),
+
+          // Footer: Waktu & Tombol Detail
+          Row(
+            children: [
+              Text(
+                "3 hari yang lalu", // Bisa diganti job['days']
+                style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {
+                  // Navigasi ke JobDetailPage di loker.dart
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => JobDetailPage(
+                        company: job['company'],
+                        position: job['position'],
+                        location: job['location'],
+                        tags: List<String>.from(job['tags']),
+                        image: job['logo'],
+                        description: job['description'],
+                      ),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Detail",
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF3F5C6E), // Warna biru tua
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   static Widget _eventCard(
     BuildContext context,
