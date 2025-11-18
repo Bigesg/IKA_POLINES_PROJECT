@@ -1,31 +1,160 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'background_decor.dart';
-import 'home.dart';
+import 'dart:ui';
 
-// ==============================
-// Custom Input Decoration Style 
-// ==============================
-InputDecoration customInputDecoration(String hint) {
+
+/// =============================================================
+/// 0. SPLASH SCREEN (ANIMASI LOGO)
+/// =============================================================
+class SplashWelcomePage extends StatefulWidget {
+  const SplashWelcomePage({super.key});
+
+  @override
+  State<SplashWelcomePage> createState() => _SplashWelcomePageState();
+}
+
+class _SplashWelcomePageState extends State<SplashWelcomePage> {
+  bool _isDotCenter = false;
+  bool _isScaleCircle = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() => _isDotCenter = true);
+
+      Future.delayed(const Duration(milliseconds: 800), () {
+        setState(() => _isScaleCircle = true);
+
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const LoginPage()),
+          );
+        });
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _buildSplashAnimation(),
+    );
+  }
+
+  Widget _buildSplashAnimation() {
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          AnimatedScale(
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.easeInOut,
+            scale: _isScaleCircle ? 10 : 1,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 600),
+            curve: Curves.easeInOutBack,
+            alignment:
+                _isDotCenter ? Alignment.center : const Alignment(0.0, 0.6),
+            child: Container(
+              width: 28,
+              height: 28,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 500),
+            opacity: _isScaleCircle ? 1 : 0,
+            child: Image.asset(
+              'assets/images/Logo.png',
+              width: 140,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// =============================================================
+/// 1. STYLE KONSTANTA & DECORATION
+/// =============================================================
+const Color primaryColor = Color(0xFF2F4F4F);
+const Color backgroundColor = Color(0xFFDCE5E1);
+const Color hintColor = Color(0xFF757575);
+const Color borderColor = Colors.black12;
+
+InputDecoration customInputDecoration(String hint, IconData? icon) {
   return InputDecoration(
     hintText: hint,
-    hintStyle: const TextStyle(color: Color(0xFF757575)),
+    hintStyle: const TextStyle(color: hintColor),
     filled: true,
     fillColor: Colors.white,
-    contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+    contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 15),
+    prefixIcon: icon != null ? Icon(icon, color: primaryColor) : null,
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(30),
-      borderSide: const BorderSide(color: Colors.grey, width: 1),
+      borderSide: const BorderSide(color: borderColor, width: 1),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(30),
-      borderSide: const BorderSide(color: Color(0xFF2F4F4F), width: 2),
+      borderSide: const BorderSide(color: primaryColor, width: 2),
     ),
   );
 }
 
-// ==============================
-// Login Page
-// ==============================
+Widget _buildInputField({
+  required TextEditingController controller,
+  required String hint,
+  IconData? icon,
+  bool obscureText = false,
+  Widget? suffixIcon,
+  TextInputType keyboardType = TextInputType.text,
+}) {
+  return Container(
+    decoration: BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black12.withOpacity(0.1),
+          blurRadius: 10,
+          offset: const Offset(0, 5),
+        ),
+      ],
+    ),
+    child: TextField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      style: const TextStyle(color: Color(0xFF212121)),
+      decoration: customInputDecoration(hint, icon).copyWith(
+        suffixIcon: suffixIcon,
+      ),
+    ),
+  );
+}
+
+/// =============================================================
+/// 2. LOGIN PAGE
+/// =============================================================
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -38,111 +167,272 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
-  void _login() {
+    void _showSuccessDialog() {
+    showGeneralDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.black38,
+      context: context,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, anim, _, child) {
+        return FadeTransition(
+          opacity: anim,
+          child: ScaleTransition(
+            scale: CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+              child: Center(
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Container(
+                      width: 320,
+                      margin: const EdgeInsets.only(top: 45),
+                      padding: const EdgeInsets.only(
+                          top: 65, left: 20, right: 20, bottom: 25),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "Berhasil Masuk!",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w700),
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            "Selamat datang kembali.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const CircleAvatar(
+                      radius: 45,
+                      backgroundColor: Colors.green,
+                      child:
+                          Icon(Icons.check, color: Colors.white, size: 48),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/home');
+    });
+  }
+
+  void _showErrorDialog() {
+    showGeneralDialog(
+      barrierDismissible: true,
+      barrierColor: Colors.black38,
+      context: context,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      transitionBuilder: (context, anim, _, child) {
+        return FadeTransition(
+          opacity: anim,
+          child: ScaleTransition(
+            scale: CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+              child: Center(
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Container(
+                      width: 320,
+                      margin: const EdgeInsets.only(top: 45),
+                      padding: const EdgeInsets.only(
+                          top: 65, left: 20, right: 20, bottom: 25),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Text(
+                            "Akun tidak ditemukan",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w700),
+                          ),
+                          SizedBox(height: 6),
+                          Text(
+                            "Silakan periksa kembali informasi akun Anda.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const CircleAvatar(
+                      radius: 45,
+                      backgroundColor: Colors.red,
+                      child:
+                          Icon(Icons.close, color: Colors.white, size: 48),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+    void _login() {
     final kta = _ktaController.text.trim();
     final password = _passwordController.text.trim();
 
     if (kta.isNotEmpty && password.isNotEmpty) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const HomePage(),
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) =>
-                  FadeTransition(opacity: animation, child: child),
-        ),
-      );
+      _showSuccessDialog();  // popup sukses
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Nomor KTA dan kata sandi wajib diisi!"),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      _showErrorDialog();    // popup gagal
     }
+  }
+
+
+  void _goToForgotPassword() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
+    );
+  }
+
+  Future<void> _openRegisterLink() async {
+    final url = Uri.parse(
+      "https://linktr.ee/ikapolines?utm_source=ig&utm_medium=social&utm_content=link_in_bio",
+    );
+    await launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDCE5E1),
+      backgroundColor: backgroundColor,
       body: BackgroundDecor(
         type: 'Bold',
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 35),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 30),
+                const SizedBox(height: 80),
+
                 const Text(
                   "Masuk",
                   style: TextStyle(
-                    fontSize: 36,
+                    fontSize: 40,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF212121),
                   ),
                 ),
-                const SizedBox(height: 8),
+
+                const SizedBox(height: 10),
                 const Text(
                   "Masuk menggunakan akun alumni (KTA) Anda.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
+                  style: TextStyle(fontSize: 14, color: hintColor),
                 ),
-                const SizedBox(height: 50),
+
+                const SizedBox(height: 60),
+
                 _buildInputField(
                   controller: _ktaController,
                   icon: Icons.person_outline,
-                  hint: 'Nomor KTA',
+                  hint: 'Nomor KTA / Username',
                 ),
+
                 const SizedBox(height: 20),
+
                 _buildInputField(
                   controller: _passwordController,
                   icon: Icons.lock_outline,
                   hint: 'Kata Sandi',
-                  isPassword: true,
+                  obscureText: _obscurePassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: primaryColor,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                 ),
-                const SizedBox(height: 15),
+
+                const SizedBox(height: 10),
+
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ForgotPasswordPage()),
-                      );
-                    },
+                    onTap: _goToForgotPassword,
                     child: const Text(
                       "Lupa Sandi?",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: TextStyle(fontSize: 14, color: hintColor),
                     ),
                   ),
                 ),
-                const SizedBox(height: 25),
+
+                const SizedBox(height: 30),
+
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _login,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2F4F4F),
-                      elevation: 4,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
                     child: const Text(
                       "Masuk",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+
+                const SizedBox(height: 25),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Belum punya akun?",
+                        style: TextStyle(color: hintColor)),
+                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: _openRegisterLink,
+                      child: const Text(
+                        "Daftar",
+                        style: TextStyle(
+                            color: primaryColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -150,357 +440,110 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  // Widget builder untuk field input
-  Widget _buildInputField({
-    required TextEditingController controller,
-    required IconData icon,
-    required String hint,
-    bool isPassword = false,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: controller,
-        obscureText: isPassword ? _obscurePassword : false,
-        decoration: customInputDecoration(hint).copyWith(
-          prefixIcon: Icon(icon, color: const Color(0xFF2F4F4F)),
-          suffixIcon: isPassword
-              ? IconButton(
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                    color: const Color(0xFF2F4F4F),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
-                )
-              : null,
-        ),
-      ),
-    );
-  }
 }
 
-// ==============================
-// Forgot Password Page
-// ==============================
-class ForgotPasswordPage extends StatelessWidget {
+/// =============================================================
+/// 3. FORGOT PASSWORD PAGE
+/// =============================================================
+class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final emailController = TextEditingController();
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+}
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFDCE5E1),
-      body: BackgroundDecor(
-        type: 'Bold',
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 35),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Lupa Kata Sandi",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              const Text(
-                "Silakan masukkan email Anda untuk memulai proses pemulihan.",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              TextField(
-                controller: emailController,
-                decoration: customInputDecoration("Email"),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const OtpPage()));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2F4F4F),
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                ),
-                child: const Text("Verifikasi Email",
-                    style: TextStyle(color: Colors.white)),
-              ),
-              const SizedBox(height: 10),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Kembali Masuk"),
-              ),
-            ],
-          ),
-        ),
-      ),
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final TextEditingController _ktaController = TextEditingController();
+
+  void _contactAdmin() async {
+  final kta = _ktaController.text.trim();
+
+  if (kta.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Mohon isi Nomor KTA / Username terlebih dahulu.")),
+    );
+    return;
+  }
+
+  final adminNumber = "6281226747714"; // WA format internasional (62)
+  final message = Uri.encodeComponent(
+      "Halo Admin, saya ingin mengatur ulang kata sandi.\n"
+      "NIM/KTA saya: $kta");
+
+  final url = Uri.parse("https://wa.me/$adminNumber?text=$message");
+
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Gagal membuka WhatsApp.")),
     );
   }
 }
 
-// ==============================
-// OTP Verification Page
-// ==============================
-class OtpPage extends StatefulWidget {
-  const OtpPage({super.key});
-
-  @override
-  State<OtpPage> createState() => _OtpPageState();
-}
-
-class _OtpPageState extends State<OtpPage> {
-  final otpControllers = List.generate(5, (_) => TextEditingController());
-  int remainingSeconds = 10;
-  bool canResend = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _startTimer();
-  }
-
-  // Timer untuk tombol kirim ulang kode
-  void _startTimer() {
-    setState(() {
-      remainingSeconds = 10;
-      canResend = false;
-    });
-
-    Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (remainingSeconds > 0) {
-        setState(() => remainingSeconds--);
-        return true;
-      } else {
-        setState(() => canResend = true);
-        return false;
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFDCE5E1),
+      backgroundColor: backgroundColor,
       body: BackgroundDecor(
         type: 'Bold',
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 35),
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Masukkan OTP",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              const Text("Kode OTP telah dikirim ke email Anda."),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: otpControllers.map((controller) {
-                  return SizedBox(
-                    width: 50,
-                    child: TextField(
-                      controller: controller,
-                      textAlign: TextAlign.center,
-                      maxLength: 1,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        counterText: "",
-                        filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Colors.grey, width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(
-                              color: Color(0xFF2F4F4F), width: 2),
-                        ),
-                      ),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      onChanged: (value) {
-                        if (value.isNotEmpty)
-                          FocusScope.of(context).nextFocus();
-                      },
-                    ),
-                  );
-                }).toList(),
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new),
+                onPressed: () => Navigator.pop(context),
               ),
-              const SizedBox(height: 25),
-              TextButton(
-                onPressed: canResend ? _startTimer : null,
-                child: Text(
-                  canResend
-                      ? "Kirim ulang kode"
-                      : "Kirim ulang kode dalam $remainingSeconds detik",
-                  style: TextStyle(
-                    color:
-                        canResend ? const Color(0xFF2F4F4F) : Colors.grey,
-                    fontWeight:
-                        canResend ? FontWeight.bold : FontWeight.normal,
+
+              const SizedBox(height: 40),
+
+              const Text(
+                "Lupa Kata\nSandi",
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  height: 1.1,
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              const Text(
+                "Masukkan Nomor KTA/Username Anda.\nKami akan membantu reset kata sandi via Admin.",
+                style: TextStyle(fontSize: 14, color: hintColor),
+              ),
+
+              const SizedBox(height: 40),
+
+              _buildInputField(
+                controller: _ktaController,
+                hint: "Nomor KTA / Username",
+              ),
+
+              const SizedBox(height: 40),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _contactAdmin,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: const Text(
+                    "Hubungi Admin via WhatsApp",
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const NewPasswordPage()));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2F4F4F),
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                ),
-                child: const Text("Lanjutkan",
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ==============================
-// New Password Page
-// ==============================
-class NewPasswordPage extends StatelessWidget {
-  const NewPasswordPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final passController = TextEditingController();
-    final confirmController = TextEditingController();
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFDCE5E1),
-      body: BackgroundDecor(
-        type: 'Bold',
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 35),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Buat Kata Sandi Baru",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              const Text(
-                "Masukkan kata sandi baru dan konfirmasi untuk menyelesaikan reset.",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              TextField(
-                controller: passController,
-                obscureText: true,
-                decoration: customInputDecoration("Kata Sandi Baru"),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: confirmController,
-                obscureText: true,
-                decoration:
-                    customInputDecoration("Konfirmasi Kata Sandi Baru"),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SuccessPage()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2F4F4F),
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                ),
-                child: const Text("Masuk",
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ==============================
-// Success Page (Setelah Password Berhasil Diubah)
-// ==============================
-class SuccessPage extends StatelessWidget {
-  const SuccessPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFDCE5E1),
-      body: BackgroundDecor(
-        type: 'Bold',
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.check_circle,
-                  color: Colors.green, size: 80),
-              const SizedBox(height: 20),
-              const Text("Berhasil!",
-                  style:
-                      TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              const Text(
-                "Kata sandi Anda telah berhasil diubah.\nSilakan masuk kembali dengan kata sandi baru.",
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginPage()),
-                    (route) => false,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2F4F4F),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 40, vertical: 14),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                ),
-                child: const Text("Kembali ke Halaman Masuk",
-                    style: TextStyle(color: Colors.white)),
-              ),
+              )
             ],
           ),
         ),
