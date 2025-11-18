@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'welcomepage.dart';
 import 'login.dart';
-import 'register.dart';
 import 'home.dart';
 
 void main() {
@@ -22,13 +20,10 @@ class IkaPolinesApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0B2E30)),
         useMaterial3: true,
       ),
-      initialRoute: '/welcome',
-
-      // daftar rute (hapus job_detail karena butuh parameter)
+      home: const SplashWelcomePage(),
+      
       routes: {
-        '/welcome': (context) => const SplashWelcomePage(),
         '/login': (context) => const LoginPage(),
-        '/register': (context) => const RegisterPage(),
         '/home': (context) => const HomePage(),
       },
     );
