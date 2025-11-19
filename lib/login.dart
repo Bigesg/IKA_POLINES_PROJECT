@@ -5,7 +5,64 @@ import 'dart:ui';
 
 
 /// =============================================================
-/// 0. SPLASH SCREEN (ANIMASI LOGO)
+/// 1. STYLE KONSTANTA & DECORATION
+/// =============================================================
+const Color primaryColor = Color(0xFF2F4F4F);
+const Color backgroundColor = Color(0xFFDCE5E1);
+const Color hintColor = Color(0xFF757575);
+const Color borderColor = Colors.black12;
+
+InputDecoration customInputDecoration(String hint, IconData? icon) {
+  return InputDecoration(
+    hintText: hint,
+    hintStyle: const TextStyle(color: hintColor),
+    filled: true,
+    fillColor: Colors.white,
+    contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 15),
+    prefixIcon: icon != null ? Icon(icon, color: primaryColor) : null,
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30),
+      borderSide: const BorderSide(color: borderColor, width: 1),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30),
+      borderSide: const BorderSide(color: primaryColor, width: 2),
+    ),
+  );
+}
+
+Widget _buildInputField({
+  required TextEditingController controller,
+  required String hint,
+  IconData? icon,
+  bool obscureText = false,
+  Widget? suffixIcon,
+  TextInputType keyboardType = TextInputType.text,
+}) {
+  return Container(
+    decoration: BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black12.withOpacity(0.1),
+          blurRadius: 10,
+          offset: const Offset(0, 5),
+        ),
+      ],
+    ),
+    child: TextField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      style: const TextStyle(color: Color(0xFF212121)),
+      decoration: customInputDecoration(hint, icon).copyWith(
+        suffixIcon: suffixIcon,
+      ),
+    ),
+  );
+}
+
+/// =============================================================
+/// 2. SPLASH SCREEN (ANIMASI LOGO)
 /// =============================================================
 class SplashWelcomePage extends StatefulWidget {
   const SplashWelcomePage({super.key});
@@ -96,64 +153,7 @@ class _SplashWelcomePageState extends State<SplashWelcomePage> {
 }
 
 /// =============================================================
-/// 1. STYLE KONSTANTA & DECORATION
-/// =============================================================
-const Color primaryColor = Color(0xFF2F4F4F);
-const Color backgroundColor = Color(0xFFDCE5E1);
-const Color hintColor = Color(0xFF757575);
-const Color borderColor = Colors.black12;
-
-InputDecoration customInputDecoration(String hint, IconData? icon) {
-  return InputDecoration(
-    hintText: hint,
-    hintStyle: const TextStyle(color: hintColor),
-    filled: true,
-    fillColor: Colors.white,
-    contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 15),
-    prefixIcon: icon != null ? Icon(icon, color: primaryColor) : null,
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: const BorderSide(color: borderColor, width: 1),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(30),
-      borderSide: const BorderSide(color: primaryColor, width: 2),
-    ),
-  );
-}
-
-Widget _buildInputField({
-  required TextEditingController controller,
-  required String hint,
-  IconData? icon,
-  bool obscureText = false,
-  Widget? suffixIcon,
-  TextInputType keyboardType = TextInputType.text,
-}) {
-  return Container(
-    decoration: BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black12.withOpacity(0.1),
-          blurRadius: 10,
-          offset: const Offset(0, 5),
-        ),
-      ],
-    ),
-    child: TextField(
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      style: const TextStyle(color: Color(0xFF212121)),
-      decoration: customInputDecoration(hint, icon).copyWith(
-        suffixIcon: suffixIcon,
-      ),
-    ),
-  );
-}
-
-/// =============================================================
-/// 2. LOGIN PAGE
+/// 3. LOGIN PAGE
 /// =============================================================
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -167,7 +167,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
-    void _showSuccessDialog() {
+  // --- Fungsi Dialog Pop-up (DIPERBAIKI UNTUK MENGHILANGKAN UNDERLINE) ---
+  void _showSuccessDialog() {
     showGeneralDialog(
       barrierDismissible: false,
       barrierColor: Colors.black38,
@@ -196,17 +197,25 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
+                        children: const [
                           Text(
                             "Berhasil Masuk!",
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w700),
+                              fontSize: 20, 
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black, 
+                              decoration: TextDecoration.none, // FIXED: Menghilangkan underline
+                            ),
                           ),
                           SizedBox(height: 6),
                           Text(
                             "Selamat datang kembali.",
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black, 
+                              decoration: TextDecoration.none, // FIXED: Menghilangkan underline
+                            ),
                           ),
                         ],
                       ),
@@ -228,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
 
     Future.delayed(const Duration(seconds: 1), () {
       Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/home'); 
     });
   }
 
@@ -265,13 +274,21 @@ class _LoginPageState extends State<LoginPage> {
                           Text(
                             "Akun tidak ditemukan",
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w700),
+                              fontSize: 20, 
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black, 
+                              decoration: TextDecoration.none, // FIXED
+                            ),
                           ),
                           SizedBox(height: 6),
                           Text(
                             "Silakan periksa kembali informasi akun Anda.",
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 14),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black, 
+                              decoration: TextDecoration.none, // FIXED
+                            ),
                           ),
                         ],
                       ),
@@ -293,14 +310,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
 
-    void _login() {
+  // --- Fungsi Utama Login ---
+  void _login() {
     final kta = _ktaController.text.trim();
     final password = _passwordController.text.trim();
 
     if (kta.isNotEmpty && password.isNotEmpty) {
-      _showSuccessDialog();  // popup sukses
+      _showSuccessDialog();
     } else {
-      _showErrorDialog();    // popup gagal
+      _showErrorDialog();
     }
   }
 
@@ -443,7 +461,7 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 /// =============================================================
-/// 3. FORGOT PASSWORD PAGE
+/// 4. FORGOT PASSWORD PAGE
 /// =============================================================
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -456,30 +474,30 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _ktaController = TextEditingController();
 
   void _contactAdmin() async {
-  final kta = _ktaController.text.trim();
+    final kta = _ktaController.text.trim();
 
-  if (kta.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Mohon isi Nomor KTA / Username terlebih dahulu.")),
-    );
-    return;
+    if (kta.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Mohon isi Nomor KTA / Username terlebih dahulu.")),
+      );
+      return;
+    }
+
+    final adminNumber = "6281226747714"; 
+    final message = Uri.encodeComponent(
+        "Halo Admin, saya ingin mengatur ulang kata sandi.\n"
+        "NIM/KTA saya: $kta");
+
+    final url = Uri.parse("https://wa.me/$adminNumber?text=$message");
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Gagal membuka WhatsApp.")),
+      );
+    }
   }
-
-  final adminNumber = "6281226747714"; // WA format internasional (62)
-  final message = Uri.encodeComponent(
-      "Halo Admin, saya ingin mengatur ulang kata sandi.\n"
-      "NIM/KTA saya: $kta");
-
-  final url = Uri.parse("https://wa.me/$adminNumber?text=$message");
-
-  if (await canLaunchUrl(url)) {
-    await launchUrl(url, mode: LaunchMode.externalApplication);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Gagal membuka WhatsApp.")),
-    );
-  }
-}
 
 
   @override
