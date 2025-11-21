@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'loker.dart'; // Pastikan file loker.dart ada di folder yang sama
+// Tidak pakai Google Fonts, pakai font bawaan HP biar pro & ringan
+import 'loker.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(scaffoldBackgroundColor: Colors.white),
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        // Menggunakan font default sistem (Roboto/San Francisco) yang rapi
+        primarySwatch: Colors.teal,
+        useMaterial3: true,
+      ),
       home: const MainLayout(),
     );
   }
@@ -35,13 +41,14 @@ class _MainLayoutState extends State<MainLayout> {
     HomePage(),
     EventPage(),
     BeasiswaPage(),
-    JobListPage(), // Mengambil dari file loker.dart
+    JobListPage(),
     ProfilPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -50,7 +57,7 @@ class _MainLayoutState extends State<MainLayout> {
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 8, // Sedikit shadow di navbar biar manis
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Event'),
@@ -85,9 +92,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      setState(() {
-        _bannerIndex = (_bannerIndex + 1) % _banners.length;
-      });
+      if (mounted) {
+        setState(() {
+          _bannerIndex = (_bannerIndex + 1) % _banners.length;
+        });
+      }
     });
   }
 
@@ -99,276 +108,287 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // HEADER
-            Row(
-              children: [
-                const CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/profile_ui.png'),
-                  radius: 26,
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      "Hi, Jerel",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+    // === JURUS ANTI KUNING ===
+    // Kita bungkus pakai "Material" disini.
+    // Ini bikin teks jadi normal (hitam), tapi desain tetep "Container" cantik kamu.
+    return Material(
+      color: Colors.white, // Pastikan background putih
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // HEADER
+              Row(
+                children: [
+                  const CircleAvatar(
+                    backgroundImage:
+                        AssetImage('assets/images/User_Profile.jpg'),
+                    radius: 26,
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Hi, Jerel",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
+                      Text(
+                        "Selamat datang di IKA Polines App!",
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  const Icon(
+                    Icons.notifications_none,
+                    size: 28,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 18),
+
+              // BANNER ATAS
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 600),
+                  child: Image.asset(
+                    _banners[_bannerIndex],
+                    key: ValueKey(_banners[_bannerIndex]),
+                    width: double.infinity,
+                    height: 160,
+                    fit: BoxFit.cover,
+                    errorBuilder: (c, e, s) => Container(
+                      height: 160,
+                      color: Colors.grey.shade200,
+                      child: const Center(
+                          child: Icon(Icons.image, color: Colors.grey)),
                     ),
-                    Text(
-                      "Selamat datang di IKA Polines App!",
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                  ],
+                  ),
                 ),
-                const Spacer(),
-                const Icon(
-                  Icons.notifications_none,
-                  size: 28,
+              ),
+
+              const SizedBox(height: 22),
+
+              // EVENT SECTION
+              const Text(
+                "Jangan Lewatkan!",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
-              ],
-            ),
-
-            const SizedBox(height: 18),
-
-            // BANNER ATAS (SLIDER)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 600),
-                child: Image.asset(
-                  _banners[_bannerIndex],
-                  key: ValueKey(_banners[_bannerIndex]),
-                  width: double.infinity,
-                  height: 160,
-                  fit: BoxFit.cover,
-                ),
               ),
-            ),
+              const SizedBox(height: 12),
 
-            const SizedBox(height: 22),
-
-            // EVENT SECTION
-            const Text(
-              "Jangan Lewatkan!",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            SizedBox(
-              height: 290,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _eventCard(
-                    context,
-                    'assets/images/event_sarasehan.png',
-                    'Sarasehan Alumni',
-                    '8 Oktober 2025',
-                    'Kumpul bareng alumni lintas angkatan.',
-                    const EventPage(),
-                  ),
-                  _eventCard(
-                    context,
-                    'assets/images/event_elektro.png',
-                    'Elektro Expo 2025',
-                    '12 Oktober 2025',
-                    'Ajang karya mahasiswa & alumni elektro Polines.',
-                    const EventPage(),
-                  ),
-                  _eventCard(
-                    context,
-                    'assets/images/event_webinar.png',
-                    'Webinar Karir: CV & Interview',
-                    '15 Oktober 2025',
-                    'Tips jitu dari praktisi HRD alumni Polines.',
-                    const EventPage(),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 28),
-
-            // BEASISWA SECTION
-            const Text(
-              "Beasiswa",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            _beasiswaCard(context),
-
-            const SizedBox(height: 28),
-
-            // BANTUAN SECTION
-            const Text(
-              "Bantuan",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            SizedBox(
-              height: 200,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _bantuanCard(
-                    'assets/images/bantuan_mekah.png',
-                    'Bantu Muslim Indonesia ke Mekkah',
-                    '0812-3456-7890',
-                  ),
-                  _bantuanCard(
-                    'assets/images/bantuan_pelosok.png',
-                    'Bantu warga pelosok untuk makan siang',
-                    '0812-3456-7891',
-                  ),
-                  _bantuanCard(
-                    'assets/images/bantuan_anak.png',
-                    'Bantu anak-anak tersenyum',
-                    '0812-3456-7892',
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 28),
-
-            // ================= LOKER SECTION (BANNER BARU) =================
-            const Text(
-              "Loker Terbuka untuk Kamu!",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // BANNER LOKER
-            GestureDetector(
-              onTap: () {
-                // Navigasi ke JobListPage yang ada di loker.dart
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const JobListPage()),
-                );
-              },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  // Gradient background agar terlihat menarik
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF234F4D), Color(0xFF2A6E6B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF234F4D).withOpacity(0.4),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
+              SizedBox(
+                height: 290,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  // Biar shadow di pinggir nggak kepotong
+                  clipBehavior: Clip.none,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Butuh lowongan kerja cepat?",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Cari sekarang di IKA Polines",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
+                    _eventCard(
+                      context,
+                      'assets/images/event_sarasehan.png',
+                      'Sarasehan Alumni',
+                      '8 Oktober 2025',
+                      'Kumpul bareng alumni lintas angkatan.',
+                      const EventPage(),
                     ),
-                    // Ikon Panah
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                      ),
+                    _eventCard(
+                      context,
+                      'assets/images/event_elektro.png',
+                      'Elektro Expo 2025',
+                      '12 Oktober 2025',
+                      'Ajang karya mahasiswa & alumni elektro Polines.',
+                      const EventPage(),
+                    ),
+                    _eventCard(
+                      context,
+                      'assets/images/event_webinar.png',
+                      'Webinar Karir: CV & Interview',
+                      '15 Oktober 2025',
+                      'Tips jitu dari praktisi HRD alumni Polines.',
+                      const EventPage(),
                     ),
                   ],
                 ),
               ),
-            ),
 
-            // ===============================================================
-            const SizedBox(height: 28),
+              const SizedBox(height: 28),
 
-            // ALUMNI SECTION
-            const Text(
-              "Dari Alumni untuk Alumni",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+              // BEASISWA SECTION
+              const Text(
+                "Beasiswa",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-            _alumniCard(
-              'assets/images/beasiswa_alumni.png',
-              'IKA Polines Care',
-              'Gerakan solidaritas alumni Polines membantu sesama.',
-            ),
-            _alumniCard(
-              'assets/images/ea_coffee.png',
-              'EA Coffee Shop',
-              'Bisnis kopi karya alumni elektro Polines.',
-            ),
-          ],
+              _beasiswaCard(context),
+
+              const SizedBox(height: 28),
+
+              // BANTUAN SECTION
+              const Text(
+                "Bantuan",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              SizedBox(
+                height: 210, // Sedikit ditinggikan biar shadow muat
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  clipBehavior: Clip.none,
+                  children: [
+                    _bantuanCard(
+                      'assets/images/bantuan_mekah.png',
+                      'Bantu Muslim Indonesia ke Mekkah',
+                      '0812-3456-7890',
+                    ),
+                    _bantuanCard(
+                      'assets/images/bantuan_pelosok.png',
+                      'Bantu warga pelosok makan',
+                      '0812-3456-7891',
+                    ),
+                    _bantuanCard(
+                      'assets/images/bantuan_anak.png',
+                      'Bantu anak-anak tersenyum',
+                      '0812-3456-7892',
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              // LOKER SECTION
+              const Text(
+                "Loker Terbuka untuk Kamu!",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const JobListPage()),
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF234F4D), Color(0xFF2A6E6B)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF234F4D).withOpacity(0.4),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              "Butuh lowongan kerja cepat?",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Cari sekarang di IKA Polines",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              // ALUMNI SECTION
+              const Text(
+                "Dari Alumni untuk Alumni",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              _alumniCard(
+                'assets/images/beasiswa_alumni.png',
+                'IKA Polines Care',
+                'Gerakan solidaritas alumni Polines membantu sesama.',
+              ),
+              _alumniCard(
+                'assets/images/ea_coffee.png',
+                'EA Coffee Shop',
+                'Bisnis kopi karya alumni elektro Polines.',
+              ),
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );
   }
 
   // === COMPONENTS ===
-
   static Widget _eventCard(
     BuildContext context,
     String img,
@@ -376,158 +396,180 @@ class _HomePageState extends State<HomePage> {
     String date,
     String desc,
     Widget pageToNavigate,
-  ) => Container(
-    width: 170,
-    margin: const EdgeInsets.only(right: 14),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
-      boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
-    ),
-    padding: const EdgeInsets.all(12),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.asset(img, height: 100, width: 146, fit: BoxFit.cover),
+  ) =>
+      Container(
+        width: 170,
+        margin: const EdgeInsets.only(
+            right: 14, bottom: 10), // Bottom margin utk shadow
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.shade200,
+                blurRadius: 8,
+                offset: const Offset(0, 4))
+          ],
         ),
-        const SizedBox(height: 10),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        Text(date, style: const TextStyle(fontSize: 12, color: Colors.teal)),
-        const SizedBox(height: 4),
-        Text(
-          desc,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12, color: Colors.black87),
-        ),
-        const Spacer(),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF004D40),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                img,
+                height: 100,
+                width: 146,
+                fit: BoxFit.cover,
+                errorBuilder: (c, e, s) =>
+                    Container(height: 100, color: Colors.grey.shade200),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 8),
             ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => pageToNavigate),
-              );
-            },
-            child: const Text("Selengkapnya", style: TextStyle(fontSize: 12)),
-          ),
-        ),
-      ],
-    ),
-  );
-
-  static Widget _beasiswaCard(BuildContext context) => Container(
-    padding: const EdgeInsets.all(14),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
-      boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Beasiswa Alumni Polines Peduli (Need-Based)",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: Colors.black,
-                ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-              const SizedBox(height: 6),
-              const Text(
-                "Bantuan biaya pendidikan bagi mahasiswa aktif Polines yang membutuhkan dukungan finansial.",
-                style: TextStyle(fontSize: 12, color: Colors.black87),
-              ),
-              const SizedBox(height: 12),
-              _buildMetadataRow(Icons.person_outline, "25 Penerima"),
-              const SizedBox(height: 4),
-              _buildMetadataRow(
-                Icons.calendar_today_outlined,
-                "8 October - 30 October 2025",
-              ),
-              const SizedBox(height: 4),
-              _buildMetadataRow(
-                Icons.apartment_outlined,
-                "Forum Alumni Polines",
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton(
+            ),
+            Text(date,
+                style: const TextStyle(fontSize: 12, color: Colors.teal)),
+            const SizedBox(height: 4),
+            Text(
+              desc,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12, color: Colors.black87),
+            ),
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF004D40),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const BeasiswaPage()),
+                    MaterialPageRoute(builder: (_) => pageToNavigate),
                   );
                 },
-                child: const Text("Detail", style: TextStyle(fontSize: 12)),
+                child:
+                    const Text("Selengkapnya", style: TextStyle(fontSize: 12)),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        const SizedBox(width: 12),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.asset(
-            'assets/images/beasiswa_alumni.png',
-            width: 100,
-            height: 100,
-            fit: BoxFit.cover,
-          ),
+      );
+
+  static Widget _beasiswaCard(BuildContext context) => Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.shade200,
+                blurRadius: 8,
+                offset: const Offset(0, 4))
+          ],
         ),
-      ],
-    ),
-  );
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Beasiswa Alumni Polines Peduli",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    "Bantuan biaya pendidikan bagi mahasiswa aktif Polines.",
+                    style: TextStyle(fontSize: 12, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildMetadataRow(Icons.person_outline, "25 Penerima"),
+                  const SizedBox(height: 4),
+                  _buildMetadataRow(
+                      Icons.calendar_today_outlined, "8 - 30 Oct 2025"),
+                  const SizedBox(height: 4),
+                  _buildMetadataRow(Icons.apartment_outlined, "Forum Alumni"),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF004D40),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 8),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BeasiswaPage()),
+                      );
+                    },
+                    child: const Text("Detail", style: TextStyle(fontSize: 12)),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                'assets/images/beasiswa_alumni.png',
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+                errorBuilder: (c, e, s) => Container(
+                    width: 100, height: 100, color: Colors.grey.shade200),
+              ),
+            ),
+          ],
+        ),
+      );
 
   static Widget _buildMetadataRow(IconData icon, String text) => Row(
-    children: [
-      Icon(icon, size: 16, color: Colors.black54),
-      const SizedBox(width: 6),
-      Text(text, style: const TextStyle(fontSize: 12, color: Colors.black54)),
-    ],
-  );
+        children: [
+          Icon(icon, size: 16, color: Colors.black54),
+          const SizedBox(width: 6),
+          Text(text,
+              style: const TextStyle(fontSize: 12, color: Colors.black54)),
+        ],
+      );
 
   static Widget _bantuanCard(String img, String title, String contactPhone) =>
       Container(
         width: 160,
-        margin: const EdgeInsets.only(right: 12),
+        margin: const EdgeInsets.only(right: 12, bottom: 10),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.shade200,
+                blurRadius: 8,
+                offset: const Offset(0, 4))
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -539,6 +581,8 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 height: 90,
                 fit: BoxFit.cover,
+                errorBuilder: (c, e, s) =>
+                    Container(height: 90, color: Colors.grey.shade200),
               ),
             ),
             const SizedBox(height: 6),
@@ -554,14 +598,10 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const Spacer(),
-            // Bagian Kontak
             Row(
               children: [
-                Icon(
-                  Icons.phone_outlined,
-                  size: 14,
-                  color: Colors.grey.shade700,
-                ),
+                Icon(Icons.phone_outlined,
+                    size: 14, color: Colors.grey.shade700),
                 const SizedBox(width: 4),
                 Text(
                   contactPhone,
@@ -578,43 +618,55 @@ class _HomePageState extends State<HomePage> {
       );
 
   static Widget _alumniCard(String img, String title, String desc) => Container(
-    margin: const EdgeInsets.only(bottom: 14),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
-      boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
-    ),
-    child: Row(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.asset(img, width: 70, height: 70, fit: BoxFit.cover),
+        margin: const EdgeInsets.only(bottom: 14),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.shade200,
+                blurRadius: 8,
+                offset: const Offset(0, 4))
+          ],
         ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                img,
+                width: 70,
+                height: 70,
+                fit: BoxFit.cover,
+                errorBuilder: (c, e, s) => Container(
+                    width: 70, height: 70, color: Colors.grey.shade200),
               ),
-              const SizedBox(height: 4),
-              Text(
-                desc,
-                style: const TextStyle(fontSize: 12, color: Colors.black87),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    desc,
+                    style: const TextStyle(fontSize: 12, color: Colors.black87),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }
 
 // ================== HALAMAN TAMBAHAN ==================
@@ -622,25 +674,25 @@ class EventPage extends StatelessWidget {
   const EventPage({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Event")),
-    body: const Center(child: Text("Halaman Event")),
-  );
+        appBar: AppBar(title: const Text("Event")),
+        body: const Center(child: Text("Halaman Event")),
+      );
 }
 
 class BeasiswaPage extends StatelessWidget {
   const BeasiswaPage({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Beasiswa")),
-    body: const Center(child: Text("Halaman Beasiswa")),
-  );
+        appBar: AppBar(title: const Text("Beasiswa")),
+        body: const Center(child: Text("Halaman Beasiswa")),
+      );
 }
 
 class ProfilPage extends StatelessWidget {
   const ProfilPage({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Profil")),
-    body: const Center(child: Text("Halaman Profil")),
-  );
+        appBar: AppBar(title: const Text("Profil")),
+        body: const Center(child: Text("Halaman Profil")),
+      );
 }
