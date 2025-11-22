@@ -10,6 +10,9 @@ class JobDetailPage extends StatefulWidget {
   final String location;
   final List<String> tags;
   final String image;
+  final String? headerImage;
+  final String? applyUrl;
+  final String? mapsUrl;
 
   const JobDetailPage({
     super.key,
@@ -18,6 +21,9 @@ class JobDetailPage extends StatefulWidget {
     required this.location,
     required this.tags,
     required this.image,
+    this.headerImage,
+    this.applyUrl,
+    this.mapsUrl,
   });
 
   @override
@@ -80,17 +86,24 @@ class _JobDetailPageState extends State<JobDetailPage>
           SafeArea(
             child: Column(
               children: [
-                // Gambar header
-                Container(
-                  height: 180,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(widget.image),
-                      fit: BoxFit.cover,
+                // Gambar header background
+                if (widget.headerImage != null)
+                  Container(
+                    height: 180,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(widget.headerImage!),
+                        fit: BoxFit.cover,
+                      ),
                     ),
+                  )
+                else
+                  Container(
+                    height: 180,
+                    width: double.infinity,
+                    color: const Color(0xFF1E5A5D),
                   ),
-                ),
                 const SizedBox(height: 12),
 
                 // Tombol tab atas
@@ -155,20 +168,23 @@ class _JobDetailPageState extends State<JobDetailPage>
   Widget _topButton(String text, bool active, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-        decoration: BoxDecoration(
-          color: active
-              ? const Color(0xFF103C3F).withOpacity(0.15)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFF103C3F)),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: const Color(0xFF103C3F),
-            fontWeight: active ? FontWeight.bold : FontWeight.normal,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+          decoration: BoxDecoration(
+            color: active
+                ? const Color(0xFF103C3F).withOpacity(0.15)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFF103C3F)),
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+              color: const Color(0xFF103C3F),
+              fontWeight: active ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
         ),
       ),
@@ -241,34 +257,31 @@ class _JobDetailPageState extends State<JobDetailPage>
             style: TextStyle(color: Colors.white70, height: 1.4),
           ),
           const SizedBox(height: 12),
-          // Ikon media sosial
-          Row(
-            children: [
-              _socialIcon('assets/images/Linkedin.png',
-                  'https://www.linkedin.com/company/google'),
-              const SizedBox(width: 10),
-              _socialIcon('assets/images/facebook.png',
-                  'https://www.facebook.com/Google'),
-              const SizedBox(width: 10),
-              _socialIcon('assets/images/web.png', 'https://about.google/'),
-              const SizedBox(width: 10),
-              _socialIcon('assets/images/instagram_icon.png',
-                  'https://www.instagram.com/google'),
-            ],
+          // Tombol Apply Here
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => _launchUrl(
+                widget.applyUrl ?? 'https://google.com',
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF1E5A5D),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Apply Here',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
         ],
-      ),
-    );
-  }
-
-  // --- Widget ikon sosial ---
-  Widget _socialIcon(String assetPath, String url) {
-    return InkWell(
-      onTap: () => _launchUrl(url),
-      child: Image.asset(
-        assetPath,
-        width: 30,
-        height: 30,
       ),
     );
   }
@@ -285,26 +298,53 @@ class _JobDetailPageState extends State<JobDetailPage>
   }
 
   Widget _smallInfoCard(IconData icon, String title, String content) {
+    bool isLocation = title == 'LOKASI';
+    
     return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1E5A5D),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.white),
-            const SizedBox(height: 8),
-            Text(title,
-                style: const TextStyle(
-                    color: Colors.white70, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text(content,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white70, fontSize: 12)),
-          ],
+      child: MouseRegion(
+        cursor: isLocation ? SystemMouseCursors.click : MouseCursor.defer,
+        child: GestureDetector(
+          onTap: isLocation
+              ? () => _launchUrl(widget.mapsUrl ?? 'https://maps.google.com')
+              : null,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E5A5D),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: Colors.white),
+                const SizedBox(height: 8),
+                Text(title,
+                    style: const TextStyle(
+                        color: Colors.white70, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                if (!isLocation) 
+                  Text(content,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white70, fontSize: 12))
+                else
+                  Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      Text(
+                        'klik disini',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );
