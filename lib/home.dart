@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-// HAPUS import google_fonts biar ga error/ribet
-import 'loker.dart';
+import 'loker.dart'; // Pastikan file loker.dart ada di folder yang sama
 
 void main() {
   runApp(const MyApp());
@@ -41,7 +40,7 @@ class _MainLayoutState extends State<MainLayout> {
     HomePage(),
     EventPage(),
     BeasiswaPage(),
-    JobListPage(),
+    JobListPage(), // Mengambil dari file loker.dart
     ProfilPage(),
   ];
 
@@ -70,7 +69,7 @@ class _MainLayoutState extends State<MainLayout> {
   }
 }
 
-// ================== HOME PAGE DENGAN BACKGROUND CIRCLE ANIMASI ==================
+// ================== HOME PAGE ==================
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -82,7 +81,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _bannerIndex = 0;
   late Timer _timer;
   late AnimationController _animationController;
-  late Animation<double> _opacityAnimation;
   late Animation<double> _scaleAnimation;
 
   final List<String> _banners = [
@@ -104,13 +102,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     // Setup animasi untuk circle background
     _animationController = AnimationController(
-      duration: const Duration(seconds: 3), // Diperlambat dikit biar smooth
+      duration: const Duration(seconds: 3),
       vsync: this,
-    )..repeat(reverse: true); // Biar animasinya loop (membesar-mengecil)
+    )..repeat(reverse: true);
 
-    _opacityAnimation = Tween<double>(begin: 0.3, end: 0.8).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
@@ -128,343 +123,383 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Stack(
-      children: [
-        // === BACKGROUND ANIMASI ===
-        AnimatedBuilder(
-          animation: _animationController,
-          builder: (context, child) {
-            return Stack(
-              children: [
-                // Circle 1: Besar di kiri atas
-                Positioned(
-                  top: -screenHeight * 0.2,
-                  left: -screenWidth * 0.3,
-                  child: Transform.scale(
-                    scale: _scaleAnimation.value,
-                    child: Container(
-                      width: screenWidth * 0.8,
-                      height: screenWidth * 0.8,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.green.shade100.withOpacity(0.4),
-                      ),
-                    ),
-                  ),
-                ),
-                // Circle 2: Sedang di kanan atas
-                Positioned(
-                  top: screenHeight * 0.1,
-                  right: -screenWidth * 0.2,
-                  child: Opacity(
-                    opacity: 0.5,
+    return Scaffold(
+      // Scaffold di sini penting untuk menghindari garis kuning jika Stack jadi root
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          // === BACKGROUND ANIMASI ===
+          AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  // Circle 1: Besar di kiri atas
+                  Positioned(
+                    top: -screenHeight * 0.2,
+                    left: -screenWidth * 0.3,
                     child: Transform.scale(
-                      scale: _scaleAnimation.value * 0.9,
+                      scale: _scaleAnimation.value,
                       child: Container(
-                        width: screenWidth * 0.4,
-                        height: screenWidth * 0.4,
+                        width: screenWidth * 0.8,
+                        height: screenWidth * 0.8,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.green.shade200.withOpacity(0.5),
+                          color: Colors.green.shade100.withOpacity(0.4),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            );
-          },
-        ),
+                  // Circle 2: Sedang di kanan atas
+                  Positioned(
+                    top: screenHeight * 0.1,
+                    right: -screenWidth * 0.2,
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: Transform.scale(
+                        scale: _scaleAnimation.value * 0.9,
+                        child: Container(
+                          width: screenWidth * 0.4,
+                          height: screenWidth * 0.4,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.green.shade200.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
 
-        // === KONTEN UTAMA ===
-        // Widget MATERIAL ini adalah KUNCI agar teks TIDAK KUNING
-        Material(
-          color: Colors
-              .transparent, // Transparan biar background animasi kelihatan
-          child: SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // HEADER
-                  Row(
-                    children: [
-                      const CircleAvatar(
-                        backgroundImage:
-                            AssetImage('assets/images/User_Profile.jpg'),
-                        radius: 26,
-                      ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Hi, Jerel",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+          // === KONTEN UTAMA ===
+          // Widget MATERIAL ini adalah SOLUSI GARIS KUNING
+          Material(
+            type: MaterialType.transparency,
+            child: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // HEADER
+                    Row(
+                      children: [
+                        const CircleAvatar(
+                          backgroundImage: AssetImage(
+                            'assets/images/profile_ui.png',
+                          ),
+                          radius: 26,
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              "Hi, Jerel",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "Selamat datang di IKA Polines!",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
+                            Text(
+                              "Selamat datang di IKA Polines!",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                  color: Colors.grey.shade200, blurRadius: 5)
-                            ]),
-                        child: const Icon(Icons.notifications_none,
-                            color: Colors.black),
-                      ),
-                    ],
-                  ),
+                                color: Colors.grey.shade200,
+                                blurRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.notifications_none,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                  // BANNER ATAS
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 600),
-                      child: Image.asset(
-                        _banners[_bannerIndex],
-                        key: ValueKey(_banners[_bannerIndex]),
-                        width: double.infinity,
-                        height: 160,
-                        fit: BoxFit.cover,
-                        errorBuilder: (c, e, s) => Container(
+                    // BANNER ATAS
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 600),
+                        child: Image.asset(
+                          _banners[_bannerIndex],
+                          key: ValueKey(_banners[_bannerIndex]),
+                          width: double.infinity,
                           height: 160,
-                          color: Colors.grey.shade200,
-                          child: const Center(
-                              child: Icon(Icons.image, color: Colors.grey)),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 22),
-
-                  // EVENT SECTION
-                  const Text(
-                    "Jangan Lewatkan!",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  SizedBox(
-                    height: 290,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      clipBehavior: Clip.none,
-                      children: [
-                        _eventCard(
-                          context,
-                          'assets/images/event_sarasehan.png',
-                          'Sarasehan Alumni',
-                          '8 Oktober 2025',
-                          'Kumpul bareng alumni.',
-                          const EventPage(),
-                        ),
-                        _eventCard(
-                          context,
-                          'assets/images/event_elektro.png',
-                          'Elektro Expo 2025',
-                          '12 Oktober 2025',
-                          'Ajang karya mahasiswa.',
-                          const EventPage(),
-                        ),
-                        _eventCard(
-                          context,
-                          'assets/images/event_webinar.png',
-                          'Webinar Karir',
-                          '15 Oktober 2025',
-                          'Tips jitu HRD.',
-                          const EventPage(),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  // BEASISWA SECTION
-                  const Text(
-                    "Beasiswa",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  _beasiswaCard(context),
-
-                  const SizedBox(height: 28),
-
-                  // BANTUAN SECTION
-                  const Text(
-                    "Bantuan",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  SizedBox(
-                    height: 210,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      clipBehavior: Clip.none,
-                      children: [
-                        _bantuanCard(
-                          'assets/images/bantuan_mekah.png',
-                          'Bantu Muslim ke Mekkah',
-                          '0812-3456-7890',
-                        ),
-                        _bantuanCard(
-                          'assets/images/bantuan_pelosok.png',
-                          'Bantu warga pelosok',
-                          '0812-3456-7891',
-                        ),
-                        _bantuanCard(
-                          'assets/images/bantuan_anak.png',
-                          'Bantu anak tersenyum',
-                          '0812-3456-7892',
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  // LOKER SECTION
-                  const Text(
-                    "Loker Terbuka!",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const JobListPage()),
-                      );
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF234F4D), Color(0xFF2A6E6B)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF234F4D).withOpacity(0.4),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                          fit: BoxFit.cover,
+                          errorBuilder: (c, e, s) => Container(
+                            height: 160,
+                            color: Colors.grey.shade200,
+                            child: const Icon(Icons.image, color: Colors.grey),
                           ),
-                        ],
+                        ),
                       ),
-                      child: Row(
+                    ),
+
+                    const SizedBox(height: 22),
+
+                    // EVENT SECTION
+                    const Text(
+                      "Jangan Lewatkan!",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    SizedBox(
+                      height: 290,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  "Butuh lowongan kerja?",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  "Cari sekarang di IKA Polines",
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          _eventCard(
+                            context,
+                            'assets/images/event_sarasehan.png',
+                            'Sarasehan Alumni',
+                            '8 Oktober 2025',
+                            'Kumpul bareng alumni.',
+                            const EventPage(),
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                            ),
+                          _eventCard(
+                            context,
+                            'assets/images/event_elektro.png',
+                            'Elektro Expo 2025',
+                            '12 Oktober 2025',
+                            'Ajang karya mahasiswa.',
+                            const EventPage(),
+                          ),
+                          _eventCard(
+                            context,
+                            'assets/images/event_webinar.png',
+                            'Webinar Karir',
+                            '15 Oktober 2025',
+                            'Tips jitu HRD.',
+                            const EventPage(),
                           ),
                         ],
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 28),
+                    const SizedBox(height: 28),
 
-                  // ALUMNI SECTION
-                  const Text(
-                    "Dari Alumni untuk Alumni",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                    // BEASISWA SECTION
+                    const Text(
+                      "Beasiswa",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                  _alumniCard(
-                    'assets/images/beasiswa_alumni.png',
-                    'IKA Polines Care',
-                    'Gerakan solidaritas alumni.',
-                  ),
-                  _alumniCard(
-                    'assets/images/ea_coffee.png',
-                    'EA Coffee Shop',
-                    'Bisnis kopi karya alumni.',
-                  ),
-                  const SizedBox(height: 30),
-                ],
+                    _beasiswaCard(context),
+
+                    const SizedBox(height: 28),
+
+                    // BANTUAN SECTION
+                    const Text(
+                      "Bantuan",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    SizedBox(
+                      height: 200,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          _bantuanCard(
+                            'assets/images/bantuan_mekah.png',
+                            'Bantu Muslim ke Mekkah',
+                            '0812-3456-7890',
+                          ),
+                          _bantuanCard(
+                            'assets/images/bantuan_pelosok.png',
+                            'Bantu warga pelosok',
+                            '0812-3456-7891',
+                          ),
+                          _bantuanCard(
+                            'assets/images/bantuan_anak.png',
+                            'Bantu anak tersenyum',
+                            '0812-3456-7892',
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 28),
+
+                    // ================= LOKER SECTION (BANNER COMPACT) =================
+                    const Text(
+                      "Loker Terbuka!",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Banner Loker (Navigasi ke loker.dart)
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const JobListPage(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        // Padding vertikal 16 membuat tinggi banner pas (tidak terlalu besar)
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF234F4D), Color(0xFF2A6E6B)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF234F4D).withOpacity(0.4),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.1),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            // Ikon Tas
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.business_center,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            // Teks
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  Text(
+                                    "Butuh Lowongan Kerja?",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "Temukan karir impianmu di sini",
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Panah
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // ===============================================================
+                    const SizedBox(height: 28),
+
+                    // ALUMNI SECTION
+                    const Text(
+                      "Dari Alumni untuk Alumni",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    _alumniCard(
+                      'assets/images/beasiswa_alumni.png',
+                      'IKA Polines Care',
+                      'Gerakan solidaritas alumni.',
+                    ),
+                    _alumniCard(
+                      'assets/images/ea_coffee.png',
+                      'EA Coffee Shop',
+                      'Bisnis kopi karya alumni.',
+                    ),
+                    const SizedBox(height: 30),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   // === COMPONENTS ===
+
   static Widget _eventCard(
     BuildContext context,
     String img,
@@ -472,171 +507,159 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     String date,
     String desc,
     Widget pageToNavigate,
-  ) =>
-      Container(
-        width: 170,
-        margin: const EdgeInsets.only(right: 14, bottom: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.shade200,
-                blurRadius: 8,
-                offset: const Offset(0, 4))
-          ],
+  ) => Container(
+    width: 170,
+    margin: const EdgeInsets.only(right: 14, bottom: 10),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.shade200,
+          blurRadius: 8,
+          offset: const Offset(0, 4),
         ),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                img,
-                height: 100,
-                width: 146,
-                fit: BoxFit.cover,
-                errorBuilder: (c, e, s) =>
-                    Container(height: 100, color: Colors.grey.shade200),
+      ],
+    ),
+    padding: const EdgeInsets.all(12),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.asset(img, height: 100, width: 146, fit: BoxFit.cover),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        Text(date, style: const TextStyle(fontSize: 12, color: Colors.teal)),
+        const SizedBox(height: 4),
+        Text(
+          desc,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 12, color: Colors.black87),
+        ),
+        const Spacer(),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF004D40),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
+              padding: const EdgeInsets.symmetric(vertical: 8),
             ),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => pageToNavigate),
+              );
+            },
+            child: const Text("Selengkapnya", style: TextStyle(fontSize: 12)),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  static Widget _beasiswaCard(BuildContext context) => Container(
+    padding: const EdgeInsets.all(14),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.shade200,
+          blurRadius: 8,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Beasiswa Alumni Polines",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            Text(date,
-                style: const TextStyle(fontSize: 12, color: Colors.teal)),
-            const SizedBox(height: 4),
-            Text(
-              desc,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12, color: Colors.black87),
-            ),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
+              const SizedBox(height: 6),
+              const Text(
+                "Bantuan biaya pendidikan bagi mahasiswa.",
+                style: TextStyle(fontSize: 12, color: Colors.black87),
+              ),
+              const SizedBox(height: 12),
+              _buildMetadataRow(Icons.person_outline, "25 Penerima"),
+              const SizedBox(height: 4),
+              _buildMetadataRow(
+                Icons.calendar_today_outlined,
+                "8 - 30 Oct 2025",
+              ),
+              const SizedBox(height: 4),
+              _buildMetadataRow(Icons.apartment_outlined, "Forum Alumni"),
+              const SizedBox(height: 12),
+              ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF004D40),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                 ),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => pageToNavigate),
+                    MaterialPageRoute(builder: (_) => const BeasiswaPage()),
                   );
                 },
-                child:
-                    const Text("Selengkapnya", style: TextStyle(fontSize: 12)),
+                child: const Text("Detail", style: TextStyle(fontSize: 12)),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      );
-
-  static Widget _beasiswaCard(BuildContext context) => Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.shade200,
-                blurRadius: 8,
-                offset: const Offset(0, 4))
-          ],
+        const SizedBox(width: 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.asset(
+            'assets/images/beasiswa_alumni.png',
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+            errorBuilder: (c, e, s) =>
+                Container(width: 100, height: 100, color: Colors.grey),
+          ),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Beasiswa Alumni Polines",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    "Bantuan biaya pendidikan bagi mahasiswa.",
-                    style: TextStyle(fontSize: 12, color: Colors.black87),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildMetadataRow(Icons.person_outline, "25 Penerima"),
-                  const SizedBox(height: 4),
-                  _buildMetadataRow(
-                    Icons.calendar_today_outlined,
-                    "8 - 30 Oct 2025",
-                  ),
-                  const SizedBox(height: 4),
-                  _buildMetadataRow(
-                    Icons.apartment_outlined,
-                    "Forum Alumni",
-                  ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF004D40),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 8,
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const BeasiswaPage()),
-                      );
-                    },
-                    child: const Text("Detail", style: TextStyle(fontSize: 12)),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                'assets/images/beasiswa_alumni.png',
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-                errorBuilder: (c, e, s) =>
-                    Container(width: 100, height: 100, color: Colors.grey),
-              ),
-            ),
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 
   static Widget _buildMetadataRow(IconData icon, String text) => Row(
-        children: [
-          Icon(icon, size: 16, color: Colors.black54),
-          const SizedBox(width: 6),
-          Text(text,
-              style: const TextStyle(fontSize: 12, color: Colors.black54)),
-        ],
-      );
+    children: [
+      Icon(icon, size: 16, color: Colors.black54),
+      const SizedBox(width: 6),
+      Text(text, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+    ],
+  );
 
   static Widget _bantuanCard(String img, String title, String contactPhone) =>
       Container(
@@ -648,9 +671,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-                color: Colors.grey.shade200,
-                blurRadius: 8,
-                offset: const Offset(0, 4))
+              color: Colors.grey.shade200,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
           ],
         ),
         child: Column(
@@ -703,53 +727,56 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       );
 
   static Widget _alumniCard(String img, String title, String desc) => Container(
-        margin: const EdgeInsets.only(bottom: 14),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey.shade200,
-                blurRadius: 8,
-                offset: const Offset(0, 4))
-          ],
+    margin: const EdgeInsets.only(bottom: 14),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.shade200,
+          blurRadius: 8,
+          offset: const Offset(0, 4),
         ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(img,
-                  width: 70,
-                  height: 70,
-                  fit: BoxFit.cover,
-                  errorBuilder: (c, e, s) =>
-                      Container(width: 70, height: 70, color: Colors.grey)),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    desc,
-                    style: const TextStyle(fontSize: 12, color: Colors.black87),
-                  ),
-                ],
+      ],
+    ),
+    child: Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            img,
+            width: 70,
+            height: 70,
+            fit: BoxFit.cover,
+            errorBuilder: (c, e, s) =>
+                Container(width: 70, height: 70, color: Colors.grey),
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                desc,
+                style: const TextStyle(fontSize: 12, color: Colors.black87),
+              ),
+            ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }
 
 // ================== HALAMAN TAMBAHAN ==================
@@ -757,25 +784,25 @@ class EventPage extends StatelessWidget {
   const EventPage({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text("Event")),
-        body: const Center(child: Text("Halaman Event")),
-      );
+    appBar: AppBar(title: const Text("Event")),
+    body: const Center(child: Text("Halaman Event")),
+  );
 }
 
 class BeasiswaPage extends StatelessWidget {
   const BeasiswaPage({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text("Beasiswa")),
-        body: const Center(child: Text("Halaman Beasiswa")),
-      );
+    appBar: AppBar(title: const Text("Beasiswa")),
+    body: const Center(child: Text("Halaman Beasiswa")),
+  );
 }
 
 class ProfilPage extends StatelessWidget {
   const ProfilPage({super.key});
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text("Profil")),
-        body: const Center(child: Text("Halaman Profil")),
-      );
+    appBar: AppBar(title: const Text("Profil")),
+    body: const Center(child: Text("Halaman Profil")),
+  );
 }
