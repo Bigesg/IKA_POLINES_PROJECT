@@ -15,10 +15,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        // Menggunakan font default sistem (Roboto/San Francisco) yang rapi
+        scaffoldBackgroundColor: const Color(
+          0xFFF8F9FA,
+        ), // Background sedikit abu muda agar elemen pop-up
         primarySwatch: Colors.teal,
         useMaterial3: true,
+        fontFamily: 'Roboto',
       ),
       home: const MainLayout(),
     );
@@ -40,7 +42,7 @@ class _MainLayoutState extends State<MainLayout> {
     HomePage(),
     EventPage(),
     BeasiswaPage(),
-    JobListPage(), // Mengambil dari file loker.dart
+    JobListPage(),
     ProfilPage(),
   ];
 
@@ -49,21 +51,51 @@ class _MainLayoutState extends State<MainLayout> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
-        backgroundColor: Colors.white,
-        elevation: 8,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Event'),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Beasiswa'),
-          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Loker'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Colors.teal,
+          unselectedItemColor: Colors.grey.shade400,
+          currentIndex: _currentIndex,
+          onTap: (i) => setState(() => _currentIndex = i),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.event_note_rounded),
+              label: 'Event',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.school_rounded),
+              label: 'Beasiswa',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.work_rounded),
+              label: 'Loker',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded),
+              label: 'Profil',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -92,7 +124,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (mounted) {
         setState(() {
           _bannerIndex = (_bannerIndex + 1) % _banners.length;
@@ -100,13 +132,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }
     });
 
-    // Setup animasi untuk circle background
     _animationController = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 4),
       vsync: this,
     )..repeat(reverse: true);
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
+    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
   }
@@ -124,8 +155,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      // Scaffold di sini penting untuk menghindari garis kuning jika Stack jadi root
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8F9FA),
       body: Stack(
         children: [
           // === BACKGROUND ANIMASI ===
@@ -134,37 +164,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             builder: (context, child) {
               return Stack(
                 children: [
-                  // Circle 1: Besar di kiri atas
                   Positioned(
-                    top: -screenHeight * 0.2,
-                    left: -screenWidth * 0.3,
+                    top: -screenHeight * 0.15,
+                    left: -screenWidth * 0.2,
                     child: Transform.scale(
                       scale: _scaleAnimation.value,
                       child: Container(
-                        width: screenWidth * 0.8,
-                        height: screenWidth * 0.8,
+                        width: screenWidth * 0.7,
+                        height: screenWidth * 0.7,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.green.shade100.withOpacity(0.4),
+                          color: Colors.teal.shade50.withOpacity(0.6),
                         ),
                       ),
                     ),
                   ),
-                  // Circle 2: Sedang di kanan atas
                   Positioned(
                     top: screenHeight * 0.1,
-                    right: -screenWidth * 0.2,
-                    child: Opacity(
-                      opacity: 0.5,
-                      child: Transform.scale(
-                        scale: _scaleAnimation.value * 0.9,
-                        child: Container(
-                          width: screenWidth * 0.4,
-                          height: screenWidth * 0.4,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.green.shade200.withOpacity(0.5),
-                          ),
+                    right: -screenWidth * 0.15,
+                    child: Transform.scale(
+                      scale: _scaleAnimation.value * 0.9,
+                      child: Container(
+                        width: screenWidth * 0.35,
+                        height: screenWidth * 0.35,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.teal.shade100.withOpacity(0.4),
                         ),
                       ),
                     ),
@@ -175,71 +200,81 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
 
           // === KONTEN UTAMA ===
-          // Widget MATERIAL ini adalah SOLUSI GARIS KUNING
           Material(
             type: MaterialType.transparency,
             child: SafeArea(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // HEADER
                     Row(
                       children: [
-                        const CircleAvatar(
-                          backgroundImage: AssetImage(
-                            'assets/images/profile_ui.png',
+                        Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.teal, width: 2),
                           ),
-                          radius: 26,
+                          child: const CircleAvatar(
+                            backgroundImage: AssetImage(
+                              'assets/images/profile_ui.png',
+                            ),
+                            radius: 24,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
+                          children: [
+                            const Text(
                               "Hi, Jerel",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                                color: Color(0xFF1F2937),
                               ),
                             ),
                             Text(
                               "Selamat datang di IKA Polines!",
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey,
+                                color: Colors.grey.shade600,
                               ),
                             ),
                           ],
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.shade200,
-                                blurRadius: 5,
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
                           child: const Icon(
                             Icons.notifications_none,
-                            color: Colors.black,
+                            color: Colors.black87,
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 24),
 
-                    // BANNER ATAS
+                    // BANNER SLIDER
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                       child: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 600),
                         child: Image.asset(
@@ -251,27 +286,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           errorBuilder: (c, e, s) => Container(
                             height: 160,
                             color: Colors.grey.shade200,
-                            child: const Icon(Icons.image, color: Colors.grey),
+                            child: const Center(
+                              child: Icon(
+                                Icons.image_not_supported,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 28),
 
-                    // EVENT SECTION
-                    const Text(
-                      "Jangan Lewatkan!",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
+                    // === EVENT SECTION (DENGAN ICON) ===
+                    _buildSectionHeader("Agenda Kampus", () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const EventPage()),
+                      );
+                    }),
                     const SizedBox(height: 12),
 
                     SizedBox(
-                      height: 290,
+                      height: 280, // Sedikit ditinggikan agar muat layout baru
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         clipBehavior: Clip.none,
@@ -280,7 +318,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             context,
                             'assets/images/event_sarasehan.png',
                             'Sarasehan Alumni',
-                            '8 Oktober 2025',
+                            '8 Okt 2025',
                             'Kumpul bareng alumni.',
                             const EventPage(),
                           ),
@@ -288,7 +326,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             context,
                             'assets/images/event_elektro.png',
                             'Elektro Expo 2025',
-                            '12 Oktober 2025',
+                            '12 Okt 2025',
                             'Ajang karya mahasiswa.',
                             const EventPage(),
                           ),
@@ -296,8 +334,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             context,
                             'assets/images/event_webinar.png',
                             'Webinar Karir',
-                            '15 Oktober 2025',
-                            'Tips jitu HRD.',
+                            '15 Okt 2025',
+                            'Tips jitu lolos HRD.',
                             const EventPage(),
                           ),
                         ],
@@ -306,32 +344,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                     const SizedBox(height: 28),
 
-                    // BEASISWA SECTION
+                    // === BEASISWA SECTION ===
                     const Text(
                       "Beasiswa",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Color(0xFF1F2937),
                       ),
                     ),
                     const SizedBox(height: 12),
-
                     _beasiswaCard(context),
 
                     const SizedBox(height: 28),
 
-                    // BANTUAN SECTION
+                    // === BANTUAN SECTION ===
                     const Text(
-                      "Bantuan",
+                      "Bantuan Sosial",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Color(0xFF1F2937),
                       ),
                     ),
                     const SizedBox(height: 12),
-
                     SizedBox(
                       height: 200,
                       child: ListView(
@@ -358,18 +394,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                     const SizedBox(height: 28),
 
-                    // ================= LOKER SECTION (BANNER COMPACT) =================
+                    // === LOKER SECTION (REDESIGNED) ===
                     const Text(
                       "Loker Terbuka!",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Color(0xFF1F2937),
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    // Banner Loker (Navigasi ke loker.dart)
+                    // BANNER LOKER YANG LEBIH MENARIK
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -381,81 +417,140 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       },
                       child: Container(
                         width: double.infinity,
-                        // Padding vertikal 16 membuat tinggi banner pas (tidak terlalu besar)
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 16,
-                        ),
+                        height: 130, // Tinggi compact tapi pas
                         decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          // GRADASI WARNA YANG LEBIH PROFESIONAL
                           gradient: const LinearGradient(
-                            colors: [Color(0xFF234F4D), Color(0xFF2A6E6B)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                            colors: [
+                              Color(0xFF004D40), // Teal Tua
+                              Color(0xFF009688), // Teal Cerah
+                            ],
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
                           ),
-                          borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF234F4D).withOpacity(0.4),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                              color: const Color(0xFF009688).withOpacity(0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 6),
                             ),
                           ],
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.1),
-                            width: 1,
-                          ),
                         ),
-                        child: Row(
+                        child: Stack(
                           children: [
-                            // Ikon Tas
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(
-                                Icons.business_center,
-                                color: Colors.white,
-                                size: 24,
+                            // Dekorasi Lingkaran Transparan
+                            Positioned(
+                              top: -20,
+                              left: -20,
+                              child: Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withOpacity(0.1),
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            // Teks
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Text(
-                                    "Butuh Lowongan Kerja?",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                            Positioned(
+                              bottom: -40,
+                              right: 40,
+                              child: Container(
+                                width: 120,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withOpacity(0.08),
+                                ),
+                              ),
+                            ),
+
+                            // Konten Banner
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 15,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(
+                                              0.2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            "HOT VACANCY",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          "Temukan Karir\nImpianmu Disini!",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1.2,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: const [
+                                            Text(
+                                              "Cek Sekarang",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4),
+                                            Icon(
+                                              Icons.arrow_forward_rounded,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    "Temukan karir impianmu di sini",
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 12,
+                                  // Icon Tas Kerja yang lebih modern
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.15),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.2),
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.business_center_rounded,
+                                      color: Colors.white,
+                                      size: 36,
                                     ),
                                   ),
                                 ],
-                              ),
-                            ),
-                            // Panah
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                                size: 18,
                               ),
                             ),
                           ],
@@ -463,16 +558,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                     ),
 
-                    // ===============================================================
                     const SizedBox(height: 28),
 
-                    // ALUMNI SECTION
+                    // === ALUMNI SECTION ===
                     const Text(
                       "Dari Alumni untuk Alumni",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Color(0xFF1F2937),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -500,6 +594,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   // === COMPONENTS ===
 
+  // Helper Header
+  Widget _buildSectionHeader(String title, VoidCallback onTap) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1F2937),
+          ),
+        ),
+        GestureDetector(
+          onTap: onTap,
+          child: const Text(
+            "Lihat Semua",
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.teal,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   static Widget _eventCard(
     BuildContext context,
     String img,
@@ -508,63 +630,111 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     String desc,
     Widget pageToNavigate,
   ) => Container(
-    width: 170,
+    width: 180,
     margin: const EdgeInsets.only(right: 14, bottom: 10),
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.grey.shade200,
-          blurRadius: 8,
+          color: Colors.grey.withOpacity(0.1),
+          blurRadius: 10,
           offset: const Offset(0, 4),
         ),
       ],
+      border: Border.all(color: Colors.grey.shade100),
     ),
-    padding: const EdgeInsets.all(12),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.asset(img, height: 100, width: 146, fit: BoxFit.cover),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          child: Image.asset(
+            img,
+            height: 100,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (c, e, s) => Container(
+              height: 100,
+              color: Colors.teal.shade50,
+              child: const Center(child: Icon(Icons.image, color: Colors.teal)),
+            ),
           ),
         ),
-        Text(date, style: const TextStyle(fontSize: 12, color: Colors.teal)),
-        const SizedBox(height: 4),
-        Text(
-          desc,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12, color: Colors.black87),
-        ),
-        const Spacer(),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF004D40),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1F2937),
+                ),
               ),
-              padding: const EdgeInsets.symmetric(vertical: 8),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => pageToNavigate),
-              );
-            },
-            child: const Text("Selengkapnya", style: TextStyle(fontSize: 12)),
+              const SizedBox(height: 6),
+
+              // PENAMBAHAN ICON KALENDER DISINI
+              Row(
+                children: [
+                  const Icon(
+                    Icons.calendar_month_outlined,
+                    size: 14,
+                    color: Colors.teal,
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      date,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.teal,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 6),
+              Text(
+                desc,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: 32,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF004D40),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => pageToNavigate),
+                    );
+                  },
+                  child: const Text(
+                    "Detail",
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -572,17 +742,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   );
 
   static Widget _beasiswaCard(BuildContext context) => Container(
-    padding: const EdgeInsets.all(14),
+    padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.grey.shade200,
-          blurRadius: 8,
+          color: Colors.grey.withOpacity(0.1),
+          blurRadius: 10,
           offset: const Offset(0, 4),
         ),
       ],
+      border: Border.all(color: Colors.grey.shade100),
     ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -591,62 +762,79 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  "Beasiswa",
+                  style: TextStyle(
+                    color: Colors.orange,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
               const Text(
                 "Beasiswa Alumni Polines",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: Colors.black,
+                  fontSize: 15,
+                  color: Color(0xFF1F2937),
                 ),
               ),
               const SizedBox(height: 6),
               const Text(
-                "Bantuan biaya pendidikan bagi mahasiswa.",
-                style: TextStyle(fontSize: 12, color: Colors.black87),
+                "Bantuan biaya pendidikan bagi mahasiswa berprestasi.",
+                style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
               const SizedBox(height: 12),
-              _buildMetadataRow(Icons.person_outline, "25 Penerima"),
-              const SizedBox(height: 4),
-              _buildMetadataRow(
-                Icons.calendar_today_outlined,
-                "8 - 30 Oct 2025",
+              Row(
+                children: [
+                  _buildMetadataRow(Icons.person_outline, "25 Kuota"),
+                  const SizedBox(width: 12),
+                  _buildMetadataRow(Icons.access_time, "3 Hari Lagi"),
+                ],
               ),
-              const SizedBox(height: 4),
-              _buildMetadataRow(Icons.apartment_outlined, "Forum Alumni"),
               const SizedBox(height: 12),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF004D40),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+              SizedBox(
+                height: 32,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF004D40),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 8,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const BeasiswaPage()),
+                    );
+                  },
+                  child: const Text(
+                    "Cek Syarat",
+                    style: TextStyle(fontSize: 11),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const BeasiswaPage()),
-                  );
-                },
-                child: const Text("Detail", style: TextStyle(fontSize: 12)),
               ),
             ],
           ),
         ),
         const SizedBox(width: 12),
         ClipRRect(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
           child: Image.asset(
             'assets/images/beasiswa_alumni.png',
-            width: 100,
-            height: 100,
+            width: 90,
+            height: 90,
             fit: BoxFit.cover,
             errorBuilder: (c, e, s) =>
-                Container(width: 100, height: 100, color: Colors.grey),
+                Container(width: 90, height: 90, color: Colors.grey.shade200),
           ),
         ),
       ],
@@ -655,9 +843,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   static Widget _buildMetadataRow(IconData icon, String text) => Row(
     children: [
-      Icon(icon, size: 16, color: Colors.black54),
-      const SizedBox(width: 6),
-      Text(text, style: const TextStyle(fontSize: 12, color: Colors.black54)),
+      Icon(icon, size: 14, color: Colors.grey),
+      const SizedBox(width: 4),
+      Text(text, style: const TextStyle(fontSize: 11, color: Colors.grey)),
     ],
   );
 
@@ -665,17 +853,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       Container(
         width: 160,
         margin: const EdgeInsets.only(right: 12, bottom: 10),
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.shade200,
-              blurRadius: 8,
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
+          border: Border.all(color: Colors.grey.shade100),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -685,38 +874,38 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Image.asset(
                 img,
                 width: double.infinity,
-                height: 90,
+                height: 85,
                 fit: BoxFit.cover,
                 errorBuilder: (c, e, s) =>
-                    Container(height: 90, color: Colors.grey),
+                    Container(height: 85, color: Colors.grey.shade200),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                height: 1.3,
-                color: Colors.black,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+                color: Color(0xFF1F2937),
               ),
             ),
             const Spacer(),
             Row(
               children: [
                 Icon(
-                  Icons.phone_outlined,
+                  Icons.phone_in_talk_outlined,
                   size: 14,
-                  color: Colors.grey.shade700,
+                  color: Colors.teal.shade700,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   contactPhone,
                   style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade700,
+                    fontSize: 11,
+                    color: Colors.teal.shade700,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -731,14 +920,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.grey.shade200,
+          color: Colors.grey.withOpacity(0.08),
           blurRadius: 8,
-          offset: const Offset(0, 4),
+          offset: const Offset(0, 2),
         ),
       ],
+      border: Border.all(color: Colors.grey.shade100),
     ),
     child: Row(
       children: [
@@ -746,11 +936,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(12),
           child: Image.asset(
             img,
-            width: 70,
-            height: 70,
+            width: 60,
+            height: 60,
             fit: BoxFit.cover,
             errorBuilder: (c, e, s) =>
-                Container(width: 70, height: 70, color: Colors.grey),
+                Container(width: 60, height: 60, color: Colors.grey.shade200),
           ),
         ),
         const SizedBox(width: 14),
@@ -763,17 +953,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Color(0xFF1F2937),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 desc,
-                style: const TextStyle(fontSize: 12, color: Colors.black87),
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
             ],
           ),
         ),
+        const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
       ],
     ),
   );
