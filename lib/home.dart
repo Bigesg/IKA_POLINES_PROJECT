@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'loker.dart'; // Pastikan file loker.dart ada di folder yang sama
+import 'beasiswa.dart'; // Import halaman beasiswa yang detail
+import 'loker.dart'; // Import halaman loker yang asli
 
 void main() {
   runApp(const MyApp());
@@ -15,9 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(
-          0xFFF8F9FA,
-        ), // Background sedikit abu muda agar elemen pop-up
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
         primarySwatch: Colors.teal,
         useMaterial3: true,
         fontFamily: 'Roboto',
@@ -38,12 +37,12 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [
-    HomePage(),
-    EventPage(),
-    BeasiswaPage(),
-    JobListPage(),
-    ProfilPage(),
+  final List<Widget> _pages = [
+    const HomePage(),
+    const EventPage(),
+    const BeasiswaPage(),
+    const JobListPage(), // Gunakan JobListPage dari loker.dart
+    const ProfilPage(),
   ];
 
   @override
@@ -309,7 +308,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     const SizedBox(height: 12),
 
                     SizedBox(
-                      height: 280, // Sedikit ditinggikan agar muat layout baru
+                      height: 280,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         clipBehavior: Clip.none,
@@ -394,7 +393,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                     const SizedBox(height: 28),
 
-                    // === LOKER SECTION (REDESIGNED) ===
+                    // === LOKER SECTION ===
                     const Text(
                       "Loker Terbuka!",
                       style: TextStyle(
@@ -405,27 +404,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                     const SizedBox(height: 12),
 
-                    // BANNER LOKER YANG LEBIH MENARIK
+                    // BANNER LOKER
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const JobListPage(),
+                            builder: (_) =>
+                                const JobListPage(), // Gunakan JobListPage
                           ),
                         );
                       },
                       child: Container(
                         width: double.infinity,
-                        height: 130, // Tinggi compact tapi pas
+                        height: 130,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          // GRADASI WARNA YANG LEBIH PROFESIONAL
                           gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF004D40), // Teal Tua
-                              Color(0xFF009688), // Teal Cerah
-                            ],
+                            colors: [Color(0xFF004D40), Color(0xFF009688)],
                             begin: Alignment.bottomLeft,
                             end: Alignment.topRight,
                           ),
@@ -439,7 +435,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         ),
                         child: Stack(
                           children: [
-                            // Dekorasi Lingkaran Transparan
                             Positioned(
                               top: -20,
                               left: -20,
@@ -465,7 +460,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               ),
                             ),
 
-                            // Konten Banner
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 20,
@@ -534,7 +528,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       ],
                                     ),
                                   ),
-                                  // Icon Tas Kerja yang lebih modern
                                   Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
@@ -593,8 +586,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   // === COMPONENTS ===
-
-  // Helper Header
   Widget _buildSectionHeader(String title, VoidCallback onTap) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -622,352 +613,366 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  static Widget _eventCard(
+  Widget _eventCard(
     BuildContext context,
     String img,
     String title,
     String date,
     String desc,
     Widget pageToNavigate,
-  ) => Container(
-    width: 180,
-    margin: const EdgeInsets.only(right: 14, bottom: 10),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.1),
-          blurRadius: 10,
-          offset: const Offset(0, 4),
-        ),
-      ],
-      border: Border.all(color: Colors.grey.shade100),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-          child: Image.asset(
-            img,
-            height: 100,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (c, e, s) => Container(
+  ) {
+    return Container(
+      width: 180,
+      margin: const EdgeInsets.only(right: 14, bottom: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Image.asset(
+              img,
               height: 100,
-              color: Colors.teal.shade50,
-              child: const Center(child: Icon(Icons.image, color: Colors.teal)),
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (c, e, s) => Container(
+                height: 100,
+                color: Colors.teal.shade50,
+                child: const Center(
+                  child: Icon(Icons.image, color: Colors.teal),
+                ),
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
-                ),
-              ),
-              const SizedBox(height: 6),
-
-              // PENAMBAHAN ICON KALENDER DISINI
-              Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_month_outlined,
-                    size: 14,
-                    color: Colors.teal,
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      date,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Colors.teal,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 6),
-              Text(
-                desc,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                height: 32,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF004D40),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.zero,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => pageToNavigate),
-                    );
-                  },
-                  child: const Text(
-                    "Detail",
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
-
-  static Widget _beasiswaCard(BuildContext context) => Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.1),
-          blurRadius: 10,
-          offset: const Offset(0, 4),
-        ),
-      ],
-      border: Border.all(color: Colors.grey.shade100),
-    ),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Text(
-                  "Beasiswa",
-                  style: TextStyle(
-                    color: Colors.orange,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Beasiswa Alumni Polines",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: Color(0xFF1F2937),
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                "Bantuan biaya pendidikan bagi mahasiswa berprestasi.",
-                style: TextStyle(fontSize: 12, color: Colors.black54),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  _buildMetadataRow(Icons.person_outline, "25 Kuota"),
-                  const SizedBox(width: 12),
-                  _buildMetadataRow(Icons.access_time, "3 Hari Lagi"),
-                ],
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 32,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF004D40),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const BeasiswaPage()),
-                    );
-                  },
-                  child: const Text(
-                    "Cek Syarat",
-                    style: TextStyle(fontSize: 11),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 12),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            'assets/images/beasiswa_alumni.png',
-            width: 90,
-            height: 90,
-            fit: BoxFit.cover,
-            errorBuilder: (c, e, s) =>
-                Container(width: 90, height: 90, color: Colors.grey.shade200),
-          ),
-        ),
-      ],
-    ),
-  );
-
-  static Widget _buildMetadataRow(IconData icon, String text) => Row(
-    children: [
-      Icon(icon, size: 14, color: Colors.grey),
-      const SizedBox(width: 4),
-      Text(text, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-    ],
-  );
-
-  static Widget _bantuanCard(String img, String title, String contactPhone) =>
-      Container(
-        width: 160,
-        margin: const EdgeInsets.only(right: 12, bottom: 10),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-          border: Border.all(color: Colors.grey.shade100),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                img,
-                width: double.infinity,
-                height: 85,
-                fit: BoxFit.cover,
-                errorBuilder: (c, e, s) =>
-                    Container(height: 85, color: Colors.grey.shade200),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                height: 1.2,
-                color: Color(0xFF1F2937),
-              ),
-            ),
-            const Spacer(),
-            Row(
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.phone_in_talk_outlined,
-                  size: 14,
-                  color: Colors.teal.shade700,
-                ),
-                const SizedBox(width: 4),
                 Text(
-                  contactPhone,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.teal.shade700,
-                    fontWeight: FontWeight.w500,
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1F2937),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.calendar_month_outlined,
+                      size: 14,
+                      color: Colors.teal,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        date,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.teal,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  desc,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 32,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF004D40),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => pageToNavigate),
+                      );
+                    },
+                    child: const Text(
+                      "Detail",
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
-      );
-
-  static Widget _alumniCard(String img, String title, String desc) => Container(
-    margin: const EdgeInsets.only(bottom: 14),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.08),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
-      border: Border.all(color: Colors.grey.shade100),
-    ),
-    child: Row(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            img,
-            width: 60,
-            height: 60,
-            fit: BoxFit.cover,
-            errorBuilder: (c, e, s) =>
-                Container(width: 60, height: 60, color: Colors.grey.shade200),
           ),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
+        ],
+      ),
+    );
+  }
+
+  Widget _beasiswaCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text(
+                    "Beasiswa",
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
+                const SizedBox(height: 8),
+                const Text(
+                  "Beasiswa Alumni Polines",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: Color(0xFF1F2937),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  "Bantuan biaya pendidikan bagi mahasiswa berprestasi.",
+                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    _buildMetadataRow(Icons.person_outline, "25 Kuota"),
+                    const SizedBox(width: 12),
+                    _buildMetadataRow(Icons.access_time, "3 Hari Lagi"),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 32,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF004D40),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BeasiswaPage()),
+                      );
+                    },
+                    child: const Text(
+                      "Cek Syarat",
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              'assets/images/beasiswa_alumni.png',
+              width: 90,
+              height: 90,
+              fit: BoxFit.cover,
+              errorBuilder: (c, e, s) =>
+                  Container(width: 90, height: 90, color: Colors.grey.shade200),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetadataRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: Colors.grey),
+        const SizedBox(width: 4),
+        Text(text, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+      ],
+    );
+  }
+
+  Widget _bantuanCard(String img, String title, String contactPhone) {
+    return Container(
+      width: 160,
+      margin: const EdgeInsets.only(right: 12, bottom: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              img,
+              width: double.infinity,
+              height: 85,
+              fit: BoxFit.cover,
+              errorBuilder: (c, e, s) =>
+                  Container(height: 85, color: Colors.grey.shade200),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              height: 1.2,
+              color: Color(0xFF1F2937),
+            ),
+          ),
+          const Spacer(),
+          Row(
+            children: [
+              Icon(
+                Icons.phone_in_talk_outlined,
+                size: 14,
+                color: Colors.teal.shade700,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(width: 4),
               Text(
-                desc,
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                contactPhone,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.teal.shade700,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
-        ),
-        const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
+
+  Widget _alumniCard(String img, String title, String desc) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100),
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              img,
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              errorBuilder: (c, e, s) =>
+                  Container(width: 60, height: 60, color: Colors.grey.shade200),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1F2937),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  desc,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+        ],
+      ),
+    );
+  }
 }
 
 // ================== HALAMAN TAMBAHAN ==================
@@ -977,15 +982,6 @@ class EventPage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text("Event")),
     body: const Center(child: Text("Halaman Event")),
-  );
-}
-
-class BeasiswaPage extends StatelessWidget {
-  const BeasiswaPage({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Beasiswa")),
-    body: const Center(child: Text("Halaman Beasiswa")),
   );
 }
 
