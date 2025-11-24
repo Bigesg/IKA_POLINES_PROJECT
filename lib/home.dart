@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'beasiswa.dart'; // Import halaman beasiswa yang detail
 import 'loker.dart'; // Import halaman loker yang asli
+import 'event.dart'; // Import halaman event yang baru
 
 void main() {
   runApp(const MyApp());
@@ -39,9 +40,9 @@ class _MainLayoutState extends State<MainLayout> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const EventPage(),
+    const EventPage(), // EventPage yang baru
     const BeasiswaPage(),
-    const JobListPage(), // Gunakan JobListPage dari loker.dart
+    const JobListPage(),
     const ProfilPage(),
   ];
 
@@ -410,8 +411,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                const JobListPage(), // Gunakan JobListPage
+                            builder: (_) => const JobListPage(),
                           ),
                         );
                       },
@@ -976,15 +976,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 }
 
 // ================== HALAMAN TAMBAHAN ==================
-class EventPage extends StatelessWidget {
-  const EventPage({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Event")),
-    body: const Center(child: Text("Halaman Event")),
-  );
-}
-
 class ProfilPage extends StatelessWidget {
   const ProfilPage({super.key});
   @override
