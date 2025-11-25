@@ -332,7 +332,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _openRegisterLink() async {
     final url = Uri.parse(
-      "https://linktr.ee/ikapolines?utm_source=ig&utm_medium=social&utm_content=link_in_bio",
+      "https://halimahadial.github.io/Register/",
     );
     await launchUrl(url, mode: LaunchMode.externalApplication);
   }
@@ -569,3 +569,4 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 }
+
