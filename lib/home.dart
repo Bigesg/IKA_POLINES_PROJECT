@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'beasiswa.dart'; // Import halaman beasiswa yang detail
-import 'loker.dart'; // Import halaman loker yang asli
-import 'event.dart'; // Import halaman event yang baru
+import 'beasiswa.dart';
+import 'loker.dart';
+import 'event.dart';
+import 'ecommerce_page.dart'; // halaman e-commerce
 
 void main() {
   runApp(const MyApp());
@@ -40,10 +41,11 @@ class _MainLayoutState extends State<MainLayout> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const EventPage(), // EventPage yang baru
+    const EventPage(),
     const BeasiswaPage(),
     const JobListPage(),
-    const ProfilPage(),
+    EcommercePage(),      // index 4 = E-Commerce
+    const ProfilPage(),   // index 5 = Profil
   ];
 
   @override
@@ -89,6 +91,10 @@ class _MainLayoutState extends State<MainLayout> {
             BottomNavigationBarItem(
               icon: Icon(Icons.work_rounded),
               label: 'Loker',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_bag_rounded),
+              label: 'E-Commerce',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded),
@@ -459,7 +465,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                               ),
                             ),
-
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 20,
@@ -574,6 +579,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       'EA Coffee Shop',
                       'Bisnis kopi karya alumni.',
                     ),
+                    _alumniCard(
+                      'assets/images/ika.png',
+                      'E-Commerce Koperasi',
+                      'Belanja produk & layanan mitra.',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EcommercePage(),
+                          ),
+                        );
+                      },
+                    ),
+
                     const SizedBox(height: 30),
                   ],
                 ),
@@ -918,58 +937,73 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _alumniCard(String img, String title, String desc) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: Colors.grey.shade100),
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              img,
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
-              errorBuilder: (c, e, s) =>
-                  Container(width: 60, height: 60, color: Colors.grey.shade200),
+  // === CARD ALUMNI (support onTap) ===
+  Widget _alumniCard(
+    String img,
+    String title,
+    String desc, {
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 14),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
+          ],
+          border: Border.all(color: Colors.grey.shade100),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                img,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+                errorBuilder: (c, e, s) => Container(
+                  width: 60,
+                  height: 60,
+                  color: Colors.grey.shade200,
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1F2937),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  desc,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  Text(
+                    desc,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-        ],
+            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+          ],
+        ),
       ),
     );
   }
@@ -978,9 +1012,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 // ================== HALAMAN TAMBAHAN ==================
 class ProfilPage extends StatelessWidget {
   const ProfilPage({super.key});
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Profil")),
-    body: const Center(child: Text("Halaman Profil")),
-  );
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Profil")),
+      body: const Center(child: Text("Halaman Profil")),
+    );
+  }
 }
