@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'event_detail.dart';
-import 'beasiswa.dart';
-import 'donasi.dart';
+import 'home.dart';
 
 class EventPage extends StatefulWidget {
-  const EventPage({Key? key}) : super(key: key);
+  const EventPage({super.key});
 
   @override
-  _EventPageState createState() => _EventPageState();
+  State<EventPage> createState() => _EventPageState();
 }
 
 class _EventPageState extends State<EventPage> {
@@ -19,136 +17,223 @@ class _EventPageState extends State<EventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7F8),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Event',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-        ),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Tabs
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(
-                tabs.length,
-                (index) => GestureDetector(
-                  onTap: () {
-                    setState(() => selectedIndex = index);
-                    if (index == 1) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const BeasiswaPage()));
-                    } else if (index == 2) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const DonasiPage()));
-                    }
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: selectedIndex == index
-                          ? const Color(0xFF004E46)
-                          : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ====================== HEADER ===========================
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Image.asset(
+                    'assets/logo_polines.png', // ganti sesuai asetmu
+                    height: 90,
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "IKATAN ALUMNI\nPOLINES",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                      color: Colors.black87,
                     ),
-                    child: Text(
-                      tabs[index],
-                      style: TextStyle(
+                  )
+                ],
+              ),
+            ),
+
+            // ====================== TABS ==============================
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3))
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(tabs.length, (index) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 20),
+                      decoration: BoxDecoration(
                         color: selectedIndex == index
-                            ? Colors.white
-                            : Colors.black,
+                            ? const Color(0xFF004E46)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        tabs[index],
+                        style: TextStyle(
+                          color:
+                              selectedIndex == index ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
+                  );
+                }),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // ===================== CONTENT ============================
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    if (selectedIndex == 0) _buildCardBerita(),
+                    if (selectedIndex == 1) _buildCardBeasiswa(),
+                    if (selectedIndex == 2) _buildCardDonasi(),
+                    const SizedBox(height: 100),
+                  ],
                 ),
               ),
             ),
-          ),
+          ],
+        ),
+      ),
 
-          // Event Card
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const EventDetailPage()));
-                  },
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 160,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(16)),
-                          ),
-                          child: const Center(child: Text("GAMBAR")),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                "Elektro Expo",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(Icons.calendar_today, size: 16),
-                                  SizedBox(width: 4),
-                                  Text("Minggu, 8 Okt 2025  |  10.00 - 16.00"),
-                                ],
-                              ),
-                              SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(Icons.location_on, size: 16),
-                                  SizedBox(width: 4),
-                                  Text("GKT Lantai 2 - Politeknik Negeri Semarang"),
-                                ],
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Elektro Expo adalah ajang tahunan terbesar yang diselenggarakan oleh Jurusan Teknik Elektro Polines...",
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+      // ====================== BOTTOM NAV =============================
+      bottomNavigationBar: _buildBottomNav(),
+    );
+  }
+
+  // =========================================================
+  //                       K A R T U   B E R I T A
+  // =========================================================
+  Widget _buildCardBerita() {
+    return _eventCard(
+      "Update Alumni Hari Ini",
+      "assets/berita1.png",
+      "Updated today",
+    );
+  }
+
+  // =========================================================
+  //                     K A R T U   B E A S I S W A
+  // =========================================================
+  Widget _buildCardBeasiswa() {
+    return _eventCard(
+      "Beasiswa Alumni Polines 2025",
+      "assets/beasiswa_logo.png",
+      "Pendaftaran dibuka 8 - 30 Oktober 2025",
+    );
+  }
+
+  // =========================================================
+  //                       K A R T U   D O N A S I
+  // =========================================================
+  Widget _buildCardDonasi() {
+    return _eventCard(
+      "Program Donasi Alumni Peduli",
+      "assets/donasi.png",
+      "Open donation",
+    );
+  }
+
+  // =========================================================
+  //                           TEMPLATE KARTU
+  // =========================================================
+  Widget _eventCard(String title, String img, String subtitle) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          )
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: const Color(0xFF004E46),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.event), label: ""),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Image.asset(img, height: 70),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  Text(subtitle, style: const TextStyle(color: Colors.grey)),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  // =========================================================
+  //                     B O T T O M   N A V
+  // =========================================================
+  Widget _buildBottomNav() {
+    return Container(
+      height: 65,
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.07),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          )
         ],
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _bottomNavItem(Icons.home, 0, () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const HomePage()),
+            );
+          }),
+          _bottomNavItem(Icons.event, 1, () {}),
+          _bottomNavItem(Icons.person, 2, () {}),
+        ],
+      ),
+    );
+  }
+
+  Widget _bottomNavItem(IconData icon, int index, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Icon(
+        icon,
+        size: 28,
+        color: index == 1 ? const Color(0xFF004E46) : Colors.grey,
       ),
     );
   }
