@@ -1,113 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'beasiswa.dart';
-import 'loker.dart';
-import 'event.dart';
-import 'ecommerce_page.dart'; // halaman e-commerce
+import 'beasiswa.dart'; // Import halaman beasiswa yang detail
+import 'loker.dart'; // Import halaman loker yang asli
+import 'event.dart'; // Import halaman event yang baru
+import 'ecommerce_page.dart'; // Import halaman ecommerce
 
-void main() {
-  runApp(const MyApp());
-}
-
-// ================== ROOT APP ==================
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
-        primarySwatch: Colors.teal,
-        useMaterial3: true,
-        fontFamily: 'Roboto',
-      ),
-      home: const MainLayout(),
-    );
-  }
-}
-
-// ================== MAIN LAYOUT ==================
-class MainLayout extends StatefulWidget {
-  const MainLayout({super.key});
-
-  @override
-  State<MainLayout> createState() => _MainLayoutState();
-}
-
-class _MainLayoutState extends State<MainLayout> {
-  int _currentIndex = 0;
-
-  final List<Widget> _pages = [
-    const HomePage(),
-    const EventPage(),
-    const BeasiswaPage(),
-    const JobListPage(),
-    EcommercePage(),      // index 4 = E-Commerce
-    const ProfilPage(),   // index 5 = Profil
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: _pages[_currentIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.teal,
-          unselectedItemColor: Colors.grey.shade400,
-          currentIndex: _currentIndex,
-          onTap: (i) => setState(() => _currentIndex = i),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          selectedLabelStyle: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.event_note_rounded),
-              label: 'Event',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school_rounded),
-              label: 'Beasiswa',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.work_rounded),
-              label: 'Loker',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_rounded),
-              label: 'E-Commerce',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_rounded),
-              label: 'Profil',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ================== HOME PAGE ==================
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -465,6 +362,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                               ),
                             ),
+
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 20,
@@ -579,6 +477,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       'EA Coffee Shop',
                       'Bisnis kopi karya alumni.',
                     ),
+
+                    // TAMBAHKAN E-COMMERCE KOPERASI DI SINI
                     _alumniCard(
                       'assets/images/ika.png',
                       'E-Commerce Koperasi',
@@ -586,9 +486,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => EcommercePage(),
-                          ),
+                          MaterialPageRoute(builder: (_) => EcommercePage()),
                         );
                       },
                     ),
@@ -937,7 +835,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  // === CARD ALUMNI (support onTap) ===
+  // UPDATE: Menambahkan parameter onTap yang opsional
   Widget _alumniCard(
     String img,
     String title,
@@ -993,10 +891,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   const SizedBox(height: 4),
                   Text(
                     desc,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -1005,19 +900,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ],
         ),
       ),
-    );
-  }
-}
-
-// ================== HALAMAN TAMBAHAN ==================
-class ProfilPage extends StatelessWidget {
-  const ProfilPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Profil")),
-      body: const Center(child: Text("Halaman Profil")),
     );
   }
 }
