@@ -1,22 +1,25 @@
 class EventModel {
   final int id;
-  final String title;
-  final String subtitle;
-  final String image;
+  final String judulEvent;
+  final String deskripsiEvent;
+  final String tanggalEvent;
+  final String gambarUrl;
 
   EventModel({
     required this.id,
-    required this.title,
-    required this.subtitle,
-    required this.image,
+    required this.judulEvent,
+    required this.deskripsiEvent,
+    required this.tanggalEvent,
+    required this.gambarUrl,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
       id: json['id'],
-      title: json['title'],
-      subtitle: json['subtitle'],
-      image: json['image'],
+      judulEvent: json['judul_event'],
+      deskripsiEvent: json['deskripsi_event'],
+      tanggalEvent: json['tanggal_event'],
+      gambarUrl: json['gambar_url'] ?? "",
     );
   }
 }

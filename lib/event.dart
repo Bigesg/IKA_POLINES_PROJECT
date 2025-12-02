@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import '../services/event_service.dart';
 import '../models/event_model.dart';
 import 'home.dart';
 
@@ -15,19 +15,26 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> {
   List<EventModel> events = [];
   bool isLoading = true;
-  int selectedIndex = 0;
 
-  final List<String> tabs = ["Berita", "Beasiswa", "Donasi"];
+  int selectedIndex = 0; // menyimpan tab yang aktif
+  final List<String> tabs = ['Berita', 'Beasiswa', 'Donasi']; // contoh tabs
 
   @override
   void initState() {
     super.initState();
-    fetchEvents();   // ← perbaikan
+    loadEvents();
   }
 
-  // ============================
-  // FETCH DATA FROM API
-  // ============================
+  void loadEvents() async {
+    try {
+      events = await EventService.getEvents();
+      setState(() => isLoading = false);
+    } catch (e) {
+      print("Error load events: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
   Future<void> fetchEvents() async {
     try {
       final url = Uri.parse("http://127.0.0.1:8000/api/events");
@@ -57,15 +64,12 @@ class _EventPageState extends State<EventPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // ====================== HEADER ===========================
+            // HEADER
             Container(
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  Image.asset(
-                    'assets/logo_polines.png',
-                    height: 90,
-                  ),
+                  Image.asset('assets/logo_polines.png', height: 90),
                   const SizedBox(height: 10),
                   const Text(
                     "IKATAN ALUMNI\nPOLINES",
@@ -76,12 +80,12 @@ class _EventPageState extends State<EventPage> {
                       letterSpacing: 1,
                       color: Colors.black87,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
 
-            // ====================== TABS ==============================
+            // TABS
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(6),
@@ -117,8 +121,9 @@ class _EventPageState extends State<EventPage> {
                       child: Text(
                         tabs[index],
                         style: TextStyle(
-                          color:
-                              selectedIndex == index ? Colors.white : Colors.black,
+                          color: selectedIndex == index
+                              ? Colors.white
+                              : Colors.black,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -130,7 +135,7 @@ class _EventPageState extends State<EventPage> {
 
             const SizedBox(height: 20),
 
-            // ===================== CONTENT ============================
+            // CONTENT
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -139,7 +144,6 @@ class _EventPageState extends State<EventPage> {
                     isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : _buildDynamicEvents(),
-
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -149,29 +153,23 @@ class _EventPageState extends State<EventPage> {
         ),
       ),
 
-      // ====================== BOTTOM NAV =============================
+      // BOTTOM NAV
       bottomNavigationBar: _buildBottomNav(),
     );
   }
 
-  // =========================================================
-  //                  D I N A M I S   E V E N T
-  // =========================================================
   Widget _buildDynamicEvents() {
     return Column(
       children: events.map((e) {
         return _eventCard(
-        e.title,         // ← FIX (judulEvent diganti title)
-        e.image,         // ← FIX (gambarEvent diganti image)
-        e.subtitle,      // ← FIX (tanggalEvent diganti subtitle)          // ← FIX
+          e.judulEvent,
+          e.gambarUrl,
+          e.tanggalEvent,
         );
       }).toList(),
     );
   }
 
-  // =========================================================
-  //                    TEMPLATE KARTU EVENT
-  // =========================================================
   Widget _eventCard(String title, String img, String subtitle) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -204,7 +202,6 @@ class _EventPageState extends State<EventPage> {
                   : const Icon(Icons.image_not_supported, size: 50),
             ),
             const SizedBox(width: 15),
-
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,9 +220,6 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  // =========================================================
-  //                     B O T T O M   N A V
-  // =========================================================
   Widget _buildBottomNav() {
     return Container(
       height: 65,
