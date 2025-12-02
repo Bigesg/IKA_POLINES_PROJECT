@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import '../models/event_model.dart';
 import 'home.dart';
 
 class EventPage extends StatefulWidget {
@@ -9,9 +13,42 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
+  List<EventModel> events = [];
+  bool isLoading = true;
   int selectedIndex = 0;
 
   final List<String> tabs = ["Berita", "Beasiswa", "Donasi"];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEvents();   // ← perbaikan
+  }
+
+  // ============================
+  // FETCH DATA FROM API
+  // ============================
+  Future<void> fetchEvents() async {
+    try {
+      final url = Uri.parse("http://127.0.0.1:8000/api/events");
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final List data = json.decode(response.body);
+
+        setState(() {
+          events = data.map((e) => EventModel.fromJson(e)).toList();
+          isLoading = false;
+        });
+      } else {
+        print("Gagal mengambil data: ${response.statusCode}");
+        setState(() => isLoading = false);
+      }
+    } catch (e) {
+      print("Error: $e");
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +63,7 @@ class _EventPageState extends State<EventPage> {
               child: Column(
                 children: [
                   Image.asset(
-                    'assets/logo_polines.png', // ganti sesuai asetmu
+                    'assets/logo_polines.png',
                     height: 90,
                   ),
                   const SizedBox(height: 10),
@@ -99,9 +136,10 @@ class _EventPageState extends State<EventPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    if (selectedIndex == 0) _buildCardBerita(),
-                    if (selectedIndex == 1) _buildCardBeasiswa(),
-                    if (selectedIndex == 2) _buildCardDonasi(),
+                    isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : _buildDynamicEvents(),
+
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -117,40 +155,22 @@ class _EventPageState extends State<EventPage> {
   }
 
   // =========================================================
-  //                       K A R T U   B E R I T A
+  //                  D I N A M I S   E V E N T
   // =========================================================
-  Widget _buildCardBerita() {
-    return _eventCard(
-      "Update Alumni Hari Ini",
-      "assets/berita1.png",
-      "Updated today",
+  Widget _buildDynamicEvents() {
+    return Column(
+      children: events.map((e) {
+        return _eventCard(
+        e.title,         // ← FIX (judulEvent diganti title)
+        e.image,         // ← FIX (gambarEvent diganti image)
+        e.subtitle,      // ← FIX (tanggalEvent diganti subtitle)          // ← FIX
+        );
+      }).toList(),
     );
   }
 
   // =========================================================
-  //                     K A R T U   B E A S I S W A
-  // =========================================================
-  Widget _buildCardBeasiswa() {
-    return _eventCard(
-      "Beasiswa Alumni Polines 2025",
-      "assets/beasiswa_logo.png",
-      "Pendaftaran dibuka 8 - 30 Oktober 2025",
-    );
-  }
-
-  // =========================================================
-  //                       K A R T U   D O N A S I
-  // =========================================================
-  Widget _buildCardDonasi() {
-    return _eventCard(
-      "Program Donasi Alumni Peduli",
-      "assets/donasi.png",
-      "Open donation",
-    );
-  }
-
-  // =========================================================
-  //                           TEMPLATE KARTU
+  //                    TEMPLATE KARTU EVENT
   // =========================================================
   Widget _eventCard(String title, String img, String subtitle) {
     return Container(
@@ -170,8 +190,21 @@ class _EventPageState extends State<EventPage> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Image.asset(img, height: 70),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: img.isNotEmpty
+                  ? Image.network(
+                      "http://127.0.0.1:8000/storage/$img",
+                      height: 70,
+                      width: 70,
+                      fit: BoxFit.cover,
+                      errorBuilder: (c, o, s) =>
+                          const Icon(Icons.broken_image, size: 50),
+                    )
+                  : const Icon(Icons.image_not_supported, size: 50),
+            ),
             const SizedBox(width: 15),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,20 +247,20 @@ class _EventPageState extends State<EventPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _bottomNavItem(Icons.home, 0, () {
+          _navIcon(Icons.home, 0, () {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const HomePage()),
             );
           }),
-          _bottomNavItem(Icons.event, 1, () {}),
-          _bottomNavItem(Icons.person, 2, () {}),
+          _navIcon(Icons.event, 1, () {}),
+          _navIcon(Icons.person, 2, () {}),
         ],
       ),
     );
   }
 
-  Widget _bottomNavItem(IconData icon, int index, VoidCallback onTap) {
+  Widget _navIcon(IconData icon, int index, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Icon(
