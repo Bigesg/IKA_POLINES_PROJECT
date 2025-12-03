@@ -1,169 +1,204 @@
 import 'package:flutter/material.dart';
+import 'Tentang_IKA.dart';
+import 'Ganti_Kata_Sandi.dart';
+import 'chat_dengan_admin.dart';
 
-void main() {
-  runApp(const IKACardApp());
-}
-
-class IKACardApp extends StatelessWidget {
-  const IKACardApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'IKA Card',
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        primaryColor: const Color(0xFF163D39),
-      ),
-      home: const IKACardScreen(),
-    );
-  }
-}
-
-class IKACardScreen extends StatelessWidget {
-  const IKACardScreen({super.key});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Color darkGreen = const Color(0xFF163D39);
+    const Color darkGreen = Color(0xFF163D39);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: darkGreen,
-        title: const Text(
-          'IKA Card',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-          ),
+        elevation: 0,
+        title: const Text('Profile', style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
-
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        child: Column(
-          children: [
-
-            // ================= TOP AREA =================
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
               children: [
-                // Placeholder gambar di kiri
+                // Profile card dengan gambar dan nama
                 Container(
-                  width: 120,
-                  height: 100,
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE6E6E6),
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.blueAccent, width: 2),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'Image',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: 20),
-
-                // `Rp. 0` di depan (kanan) gambar, sejajar secara vertikal
-                const Text(
-                  'Rp. 0',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // ================== CARD NUMBER ==================
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Card Number',
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(height: 5),
-
-                // Kontrol sederhana: teks dengan underline di bawahnya
-                Container(
-                  padding: EdgeInsets.zero,
-                  height: 45,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
-                            '(5784)',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
+                      // Card image dengan wavy bottom - Placeholder kosong
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            width: 100,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.grey[200],
                             ),
                           ),
-                          Icon(
-                            Icons.expand_more,
-                            color: Colors.black54,
+                          // Wavy decoration at bottom
+                          Positioned(
+                            bottom: -8,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFD4AF37),
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Black bar under wave
+                          Positioned(
+                            bottom: -20,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 6),
-                      Container(height: 1, color: Colors.black54),
+                      const SizedBox(width: 14),
+                      // Name and ID
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                'Bagas Prasetyo',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF1F2937),
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                'IKA-POLINES-YY-XXXXXX',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Three dots menu
+                      GestureDetector(
+                        onTap: () {},
+                        child: const Icon(
+                          Icons.more_vert,
+                          color: Colors.black54,
+                          size: 20,
+                        ),
+                      ),
                     ],
                   ),
                 ),
+
+                const SizedBox(height: 24),
+
+                // Option list
+                _buildOptionItem(
+                  context: context,
+                  icon: Icons.shield_outlined,
+                  title: 'Ganti Kata Sandi',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (context) => const GantiKataSandiPage(),
+                    );
+                  },
+                ),
+                const Divider(height: 1, indent: 56),
+                _buildOptionItem(
+                  context: context,
+                  icon: Icons.article_outlined,
+                  title: 'Chat dengan Admin',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ChatDenganAdminPage()),
+                    );
+                  },
+                ),
+                const Divider(height: 1, indent: 56),
+                _buildOptionItem(
+                  context: context,
+                  icon: Icons.language_outlined,
+                  title: 'Tentang IKA Polines',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const TentangIKAPage()),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 200),
               ],
             ),
-
-            const SizedBox(height: 25),
-
-            // ================= BUTTON LIST =================
-            buildMenuButton('Account Transaction History', darkGreen),
-            const SizedBox(height: 15),
-            buildMenuButton('Change Password', darkGreen),
-            const SizedBox(height: 15),
-            buildMenuButton('Report Lost Card', darkGreen),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  // Button builder
-  Widget buildMenuButton(String title, Color bgColor) {
-    return SizedBox(
-      width: double.infinity,
-      height: 55,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: bgColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+  static Widget _buildOptionItem({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(8),
         ),
-        onPressed: () {},
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
-        ),
+        child: Icon(icon, color: Colors.black54, size: 20),
       ),
+      title: Text(title, style: const TextStyle(fontSize: 14, color: Color(0xFF1F2937))),
+      onTap: onTap,
     );
   }
 }
