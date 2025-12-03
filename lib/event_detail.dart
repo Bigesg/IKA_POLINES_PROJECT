@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 class EventDetailPage extends StatelessWidget {
   final String title;
   final String content;
+  final String image;
+  final String date;
+  final String location;
 
   const EventDetailPage({
     super.key,
     required this.title,
     required this.content,
+    required this.image,
+    required this.date,
+    required this.location,
   });
 
   @override
@@ -21,108 +27,105 @@ class EventDetailPage extends StatelessWidget {
             Container(
               width: double.infinity,
               height: 220,
-              decoration: const BoxDecoration(
-                color: Color(0xFF004E46),
+              decoration: BoxDecoration(
+                color: const Color(0xFF004E46),
+                image: DecorationImage(
+                  image: AssetImage(image),
+                  fit: BoxFit.cover,
+                  onError: (_, __) {},
+                ),
               ),
-              child: const Center(
-                child: Text(
-                  "gambar",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
+              child: Container(
+                color: Colors.black.withOpacity(0.25),
+                child: const Center(
+                  child: Text(
+                    "EVENT DETAIL",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
 
-            // ===================== TOMBOL BACK ======================
+            // ===================== BACK BUTTON ======================
             Padding(
               padding: const EdgeInsets.only(left: 20, top: 12),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border:
-                            Border.all(color: Colors.black.withOpacity(0.5)),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.arrow_back, size: 16),
-                          SizedBox(width: 6),
-                          Text("Back"),
-                        ],
-                      ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6, horizontal: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black45),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.arrow_back, size: 16),
+                        SizedBox(width: 6),
+                        Text("Back"),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
 
             const SizedBox(height: 10),
 
-            // ===================== KONTEN DETAIL =====================
+            // ===================== CONTENT =====================
             Expanded(
-              child: Container(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ---------- Profil Penulis ----------
+                      // ---------- Author ----------
                       Row(
                         children: [
                           Container(
                             width: 48,
                             height: 48,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
+                              color: Colors.grey,
                             ),
                           ),
                           const SizedBox(width: 12),
                           const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Izabel Peattie",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15)),
+                              Text(
+                                "Izabel Peattie",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                              ),
                               Text("Dosen",
                                   style: TextStyle(color: Colors.grey)),
                             ],
                           ),
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 6, horizontal: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.grey),
-                            ),
-                            child: const Text("Follow",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500)),
-                          )
                         ],
                       ),
 
                       const SizedBox(height: 20),
 
-                      // ---------- Tanggal ----------
-                      const Text(
-                        "Minggu, 8 Oct 2025",
-                        style: TextStyle(color: Colors.grey),
+                      // ---------- DATE ----------
+                      Text(
+                        date,
+                        style: const TextStyle(color: Colors.grey),
                       ),
-                      const SizedBox(height: 5),
 
-                      // ---------- Judul ----------
+                      const SizedBox(height: 6),
+
+                      // ---------- TITLE ----------
                       Text(
                         title,
                         style: const TextStyle(
@@ -133,9 +136,10 @@ class EventDetailPage extends StatelessWidget {
 
                       const SizedBox(height: 4),
 
-                      const Text(
-                        "GKT Lt 2, Politeknik Negeri Semarang",
-                        style: TextStyle(
+                      // ---------- LOCATION ----------
+                      Text(
+                        location,
+                        style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 14,
                         ),
@@ -143,12 +147,12 @@ class EventDetailPage extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      // ---------- Tentang ----------
                       const Text(
                         "Tentang",
                         style: TextStyle(
                             fontSize: 17, fontWeight: FontWeight.bold),
                       ),
+
                       const SizedBox(height: 8),
 
                       Text(
@@ -159,12 +163,12 @@ class EventDetailPage extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      // ---------- Tujuan ----------
                       const Text(
                         "Tujuan Kegiatan",
                         style: TextStyle(
                             fontSize: 17, fontWeight: FontWeight.bold),
                       ),
+
                       const SizedBox(height: 8),
 
                       const Text(
@@ -183,7 +187,7 @@ class EventDetailPage extends StatelessWidget {
               ),
             ),
 
-            // ===================== BUTTON CONTACT =====================
+            // ===================== CONTACT BUTTON =====================
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -191,9 +195,10 @@ class EventDetailPage extends StatelessWidget {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 6,
-                      offset: Offset(0, -2))
+                    color: Colors.black12,
+                    blurRadius: 6,
+                    offset: Offset(0, -2),
+                  )
                 ],
               ),
               child: Container(
