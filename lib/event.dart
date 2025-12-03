@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../services/event_service.dart';
-import '../models/event_model.dart';
 import 'home.dart';
+import 'eventdetail.dart';
+import 'beasiswadetail.dart';
+import 'donasidetail.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key});
@@ -13,49 +12,9 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
-  List<EventModel> events = [];
-  bool isLoading = true;
+  int selectedIndex = 0;
 
-  int selectedIndex = 0; // menyimpan tab yang aktif
-  final List<String> tabs = ['Berita', 'Beasiswa', 'Donasi']; // contoh tabs
-
-  @override
-  void initState() {
-    super.initState();
-    loadEvents();
-  }
-
-  void loadEvents() async {
-    try {
-      events = await EventService.getEvents();
-      setState(() => isLoading = false);
-    } catch (e) {
-      print("Error load events: $e");
-      setState(() => isLoading = false);
-    }
-  }
-
-  Future<void> fetchEvents() async {
-    try {
-      final url = Uri.parse("http://127.0.0.1:8000/api/events");
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final List data = json.decode(response.body);
-
-        setState(() {
-          events = data.map((e) => EventModel.fromJson(e)).toList();
-          isLoading = false;
-        });
-      } else {
-        print("Gagal mengambil data: ${response.statusCode}");
-        setState(() => isLoading = false);
-      }
-    } catch (e) {
-      print("Error: $e");
-      setState(() => isLoading = false);
-    }
-  }
+  final List<String> tabs = ["Berita", "Beasiswa", "Donasi"];
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +23,15 @@ class _EventPageState extends State<EventPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // HEADER
+            // ====================== HEADER ===========================
             Container(
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  Image.asset('assets/logo_polines.png', height: 90),
+                  Image.asset(
+                    'assets/logo_polines.png',
+                    height: 90,
+                  ),
                   const SizedBox(height: 10),
                   const Text(
                     "IKATAN ALUMNI\nPOLINES",
@@ -80,12 +42,12 @@ class _EventPageState extends State<EventPage> {
                       letterSpacing: 1,
                       color: Colors.black87,
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
 
-            // TABS
+            // ====================== TABS ==============================
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(6),
@@ -94,9 +56,10 @@ class _EventPageState extends State<EventPage> {
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3))
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  )
                 ],
               ),
               child: Row(
@@ -111,7 +74,9 @@ class _EventPageState extends State<EventPage> {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 20),
+                        vertical: 8,
+                        horizontal: 20,
+                      ),
                       decoration: BoxDecoration(
                         color: selectedIndex == index
                             ? const Color(0xFF004E46)
@@ -135,15 +100,15 @@ class _EventPageState extends State<EventPage> {
 
             const SizedBox(height: 20),
 
-            // CONTENT
+            // ===================== CONTENT ============================
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : _buildDynamicEvents(),
+                    if (selectedIndex == 0) _buildCardBerita(),
+                    if (selectedIndex == 1) _buildCardBeasiswa(),
+                    if (selectedIndex == 2) _buildCardDonasi(),
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -153,73 +118,148 @@ class _EventPageState extends State<EventPage> {
         ),
       ),
 
-      // BOTTOM NAV
+      // ====================== BOTTOM NAV =============================
       bottomNavigationBar: _buildBottomNav(),
     );
   }
 
-  Widget _buildDynamicEvents() {
-    return Column(
-      children: events.map((e) {
-        return _eventCard(
-          e.judulEvent,
-          e.gambarUrl,
-          e.tanggalEvent,
+  // =========================================================
+  //                       K A R T U   B E R I T A
+  // =========================================================
+  Widget _buildCardBerita() {
+    return _eventCard(
+      title: "Update Alumni Hari Ini",
+      img: "assets/berita1.png",
+      subtitle: "Updated today",
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EventDetailPage(
+              title: "Update Alumni Hari Ini",
+              content:
+                  "Berita terbaru seputar kegiatan alumni Polines hari ini.",
+              image: "assets/berita1.png",
+              date: "Hari ini",
+              location: "Polines, Semarang",
+            ),
+          ),
         );
-      }).toList(),
+      },
     );
   }
 
-  Widget _eventCard(String title, String img, String subtitle) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          )
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: img.isNotEmpty
-                  ? Image.network(
-                      "http://127.0.0.1:8000/storage/$img",
-                      height: 70,
-                      width: 70,
-                      fit: BoxFit.cover,
-                      errorBuilder: (c, o, s) =>
-                          const Icon(Icons.broken_image, size: 50),
-                    )
-                  : const Icon(Icons.image_not_supported, size: 50),
+  // =========================================================
+  //                     K A R T U   B E A S I S W A
+  // =========================================================
+  Widget _buildCardBeasiswa() {
+    return _eventCard(
+      title: "Beasiswa Alumni Polines 2025",
+      img: "assets/beasiswa_logo.png",
+      subtitle: "Pendaftaran dibuka 8 - 30 Oktober 2025",
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BeasiswaDetailPage(
+              title: "Beasiswa Alumni Polines 2025",
+              content:
+                  "Program beasiswa untuk mahasiswa berprestasi dan kurang mampu dari alumni Polines.",
+              image: "assets/beasiswa_logo.png",
+              date: "8 - 30 Oktober 2025",
+              location: "Politeknik Negeri Semarang",
             ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 5),
-                  Text(subtitle, style: const TextStyle(color: Colors.grey)),
-                ],
-              ),
+          ),
+        );
+      },
+    );
+  }
+
+  // =========================================================
+  //                       K A R T U   D O N A S I
+  // =========================================================
+  Widget _buildCardDonasi() {
+    return _eventCard(
+      title: "Program Donasi Alumni Peduli",
+      img: "assets/donasi.png",
+      subtitle: "Open donation",
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DonasiDetailPage(
+              title: "Program Donasi Alumni Peduli",
+              content:
+                  "Mari bersama membantu saudara kita yang membutuhkan melalui program donasi alumni.",
+              image: "assets/donasi.png",
+              date: "Open",
+              location: "Semua Wilayah",
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // =========================================================
+  //                           TEMPLATE KARTU
+  // =========================================================
+  Widget _eventCard({
+    required String title,
+    required String img,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
             )
           ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Image.asset(img, height: 70),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
+  // =========================================================
+  //                     B O T T O M   N A V
+  // =========================================================
   Widget _buildBottomNav() {
     return Container(
       height: 65,
@@ -241,26 +281,26 @@ class _EventPageState extends State<EventPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _navIcon(Icons.home, 0, () {
+          _bottomNavItem(Icons.home, () {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => const HomePage()),
             );
           }),
-          _navIcon(Icons.event, 1, () {}),
-          _navIcon(Icons.person, 2, () {}),
+          _bottomNavItem(Icons.event, () {}),
+          _bottomNavItem(Icons.person, () {}),
         ],
       ),
     );
   }
 
-  Widget _navIcon(IconData icon, int index, VoidCallback onTap) {
+  Widget _bottomNavItem(IconData icon, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Icon(
         icon,
         size: 28,
-        color: index == 1 ? const Color(0xFF004E46) : Colors.grey,
+        color: const Color(0xFF004E46),
       ),
     );
   }
