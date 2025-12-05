@@ -201,9 +201,9 @@ class _LoginPageState extends State<LoginPage> {
                           Text(
                             "Berhasil Masuk!",
                             style: TextStyle(
-                              fontSize: 20, 
+                              fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black, 
+                              color: Colors.black,
                               decoration: TextDecoration.none, // FIXED: Menghilangkan underline
                             ),
                           ),
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.black, 
+                              color: Colors.black,
                               decoration: TextDecoration.none, // FIXED: Menghilangkan underline
                             ),
                           ),
@@ -233,11 +233,12 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       },
+      barrierLabel: "Success dialog", // Added barrierLabel to fix the assertion error
     );
 
     Future.delayed(const Duration(seconds: 1), () {
       Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/home'); 
+      Navigator.pushReplacementNamed(context, '/main'); 
     });
   }
 
@@ -274,9 +275,9 @@ class _LoginPageState extends State<LoginPage> {
                           Text(
                             "Akun tidak ditemukan",
                             style: TextStyle(
-                              fontSize: 20, 
+                              fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black, 
+                              color: Colors.black,
                               decoration: TextDecoration.none, // FIXED
                             ),
                           ),
@@ -286,7 +287,7 @@ class _LoginPageState extends State<LoginPage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.black, 
+                              color: Colors.black,
                               decoration: TextDecoration.none, // FIXED
                             ),
                           ),
@@ -306,6 +307,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       },
+      barrierLabel: "Error dialog", // Added barrierLabel to fix the assertion error
     );
   }
 
