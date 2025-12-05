@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'home.dart';
+import 'navigator.dart';
 
 void main() {
   runApp(const IkaPolinesApp());
@@ -21,10 +22,11 @@ class IkaPolinesApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const SplashWelcomePage(),
-      
+
       routes: {
         '/login': (context) => const LoginPage(),
-        '/home': (context) => const HomePage(),
+        '/home': (context) => const MainAppNavigator(),
+        '/main': (context) => const MainAppNavigator(),
       },
     );
   }
