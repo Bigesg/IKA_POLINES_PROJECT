@@ -4,6 +4,8 @@ import 'beasiswadetail.dart'; // Import halaman beasiswa yang detail
 import 'loker.dart'; // Import halaman loker yang asli
 import 'event.dart'; // Import halaman event yang baru
 import 'ecommerce_page.dart'; // Import halaman ecommerce
+import 'notification_service.dart'; // Import notification service
+import 'notification_page.dart'; // Import notification page
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +19,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late Timer _timer;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  final NotificationService _notificationService = NotificationService();
 
   final List<String> _banners = [
     'assets/images/banner_beasiswa.png',
@@ -27,6 +30,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _notificationService.initializeNotifications(); // Initialize notifications
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (mounted) {
         setState(() {
@@ -152,22 +156,66 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ],
                         ),
                         const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade200,
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const NotificationPage(),
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.shade200,
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.notifications_none,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              // Badge for unread notifications
+                              ValueListenableBuilder<int>(
+                                valueListenable: ValueNotifier(
+                                  _notificationService.getUnreadCount(),
+                                ),
+                                builder: (context, unreadCount, child) {
+                                  if (unreadCount > 0) {
+                                    return Positioned(
+                                      top: 0,
+                                      right: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Text(
+                                          unreadCount.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
                               ),
                             ],
-                          ),
-                          child: const Icon(
-                            Icons.notifications_none,
-                            color: Colors.black87,
                           ),
                         ),
                       ],
@@ -729,13 +777,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const BeasiswaDetailPage(
-                          title: "Beasiswa Alumni Polines 2025",
-                          content: "Program beasiswa untuk mahasiswa berprestasi dan kurang mampu dari alumni Polines.",
-                          image: "assets/beasiswa_logo.png",
-                          date: "8 - 30 Oktober 2025",
-                          location: "Politeknik Negeri Semarang",
-                        )),
+                        MaterialPageRoute(
+                          builder: (_) => const BeasiswaDetailPage(
+                            title: "Beasiswa Alumni Polines 2025",
+                            content:
+                                "Program beasiswa untuk mahasiswa berprestasi dan kurang mampu dari alumni Polines.",
+                            image: "assets/beasiswa_logo.png",
+                            date: "8 - 30 Oktober 2025",
+                            location: "Politeknik Negeri Semarang",
+                          ),
+                        ),
                       );
                     },
                     child: const Text(
