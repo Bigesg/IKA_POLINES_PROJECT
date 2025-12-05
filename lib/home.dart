@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'beasiswa.dart'; // Import halaman beasiswa yang detail
+import 'beasiswadetail.dart'; // Import halaman beasiswa yang detail
 import 'loker.dart'; // Import halaman loker yang asli
 import 'event.dart'; // Import halaman event yang baru
 import 'ecommerce_page.dart'; // Import halaman ecommerce
@@ -729,7 +729,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const BeasiswaPage()),
+                        MaterialPageRoute(builder: (_) => const BeasiswaDetailPage(
+                          title: "Beasiswa Alumni Polines 2025",
+                          content: "Program beasiswa untuk mahasiswa berprestasi dan kurang mampu dari alumni Polines.",
+                          image: "assets/beasiswa_logo.png",
+                          date: "8 - 30 Oktober 2025",
+                          location: "Politeknik Negeri Semarang",
+                        )),
                       );
                     },
                     child: const Text(
