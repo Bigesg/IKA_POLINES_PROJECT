@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
-import 'eventdetail.dart';
+import 'event_detail.dart';
 import 'beasiswadetail.dart';
 import 'donasidetail.dart';
 
@@ -117,9 +117,6 @@ class _EventPageState extends State<EventPage> {
           ],
         ),
       ),
-
-      // ====================== BOTTOM NAV =============================
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -257,51 +254,4 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  // =========================================================
-  //                     B O T T O M   N A V
-  // =========================================================
-  Widget _buildBottomNav() {
-    return Container(
-      height: 65,
-      padding: const EdgeInsets.symmetric(horizontal: 25),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          )
-        ],
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _bottomNavItem(Icons.home, () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const HomePage()),
-            );
-          }),
-          _bottomNavItem(Icons.event, () {}),
-          _bottomNavItem(Icons.person, () {}),
-        ],
-      ),
-    );
-  }
-
-  Widget _bottomNavItem(IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Icon(
-        icon,
-        size: 28,
-        color: const Color(0xFF004E46),
-      ),
-    );
-  }
 }
