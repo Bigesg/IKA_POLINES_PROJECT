@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'utils/api_helper.dart';
 import 'package:http/http.dart' as http;
 import 'ecommerce_detail_page.dart';
 
@@ -15,9 +16,7 @@ class _EcommercePageState extends State<EcommercePage> {
   List<dynamic> koperasiList = [];
   bool isLoading = true;
   bool isError = false;
-  static const String baseApiUrl =
-      "http://127.0.0.1:8000/api/galeri";
-    static const String serverBase = "http://127.0.0.1:8000";
+  static String get baseApiUrl => ApiHelper.apiUrl('/api/galeri');
 
   @override
   void initState() {
@@ -97,31 +96,7 @@ class _EcommercePageState extends State<EcommercePage> {
 
   /// Normalisasi URL gambar: tambahkan host jika path relatif,
   /// dan sesuaikan host lokal untuk environment (web vs emulator).
-  String? resolveImageUrl(String? url) {
-    if (url == null || url.isEmpty) return null;
-
-    var u = url;
-    if (u.startsWith('http')) {
-      if (kIsWeb) {
-        // replace 127.0.0.1 with localhost for browser
-        u = u.replaceFirst('127.0.0.1', 'localhost');
-      }
-      return u;
-    }
-
-    // path relatif dari API, pastikan ada leading slash
-    if (!u.startsWith('/')) u = '/$u';
-
-    // untuk web kita gunakan serverBase tapi ganti host ke localhost
-    if (kIsWeb) {
-      return serverBase.replaceFirst('127.0.0.1', 'localhost') + u;
-    }
-
-    // untuk emulator Android, 127.0.0.1 pada kode server seharusnya
-    // diganti ke 10.0.2.2; namun gunakan serverBase default agar
-    // developer bisa menyesuaikan sesuai environment mereka.
-    return serverBase + u;
-  }
+  String? resolveImageUrl(String? url) => ApiHelper.resolveImageUrl(url);
 
   @override
   Widget build(BuildContext context) {

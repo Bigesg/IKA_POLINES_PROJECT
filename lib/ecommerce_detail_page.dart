@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'utils/api_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EcommerceDetailPage extends StatefulWidget {
@@ -25,24 +26,12 @@ class _EcommerceDetailPageState extends State<EcommerceDetailPage> {
     koperasiFuture = fetchKoperasiDetail(widget.koperasiId);
   }
 
-  static const String serverBase = 'http://127.0.0.1:8000';
-
-  String? resolveImageUrl(String? url) {
-    if (url == null || url.isEmpty) return null;
-    var u = url;
-    if (u.startsWith('http')) {
-      if (kIsWeb) u = u.replaceFirst('127.0.0.1', 'localhost');
-      return u;
-    }
-    if (!u.startsWith('/')) u = '/$u';
-    if (kIsWeb) return serverBase.replaceFirst('127.0.0.1', 'localhost') + u;
-    return serverBase.replaceFirst('127.0.0.1', '10.0.2.2') + u;
-  }
+  String? resolveImageUrl(String? url) => ApiHelper.resolveImageUrl(url);
 
   // ===================== API CONNECT =====================
   Future<Map<String, dynamic>> fetchKoperasiDetail(int id) async {
     final response = await http.get(
-      Uri.parse("http://127.0.0.1:8000/api/koperasi/$id"),
+      Uri.parse(ApiHelper.apiUrl('/api/koperasi/$id')),
     );
 
     if (response.statusCode == 200) {

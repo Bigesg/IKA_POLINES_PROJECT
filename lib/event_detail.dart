@@ -6,6 +6,7 @@ class EventDetailPage extends StatelessWidget {
   final String image;
   final String date;
   final String location;
+  final String? tujuan;
 
   const EventDetailPage({
     super.key,
@@ -14,6 +15,7 @@ class EventDetailPage extends StatelessWidget {
     required this.image,
     required this.date,
     required this.location,
+    this.tujuan,
   });
 
   @override
@@ -30,9 +32,8 @@ class EventDetailPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFF004E46),
                 image: DecorationImage(
-                  image: AssetImage(image),
+                  image: image.startsWith('http') ? NetworkImage(image) : AssetImage(image) as ImageProvider,
                   fit: BoxFit.cover,
-                  onError: (_, __) {},
                 ),
               ),
               child: Container(
@@ -87,35 +88,8 @@ class EventDetailPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ---------- Author ----------
-                      Row(
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Izabel Peattie",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15),
-                              ),
-                              Text("Dosen",
-                                  style: TextStyle(color: Colors.grey)),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 20),
+                      // Author block removed as requested (no 'Dosen' label)
+                      const SizedBox(height: 10),
 
                       // ---------- DATE ----------
                       Text(
@@ -165,19 +139,16 @@ class EventDetailPage extends StatelessWidget {
 
                       const Text(
                         "Tujuan Kegiatan",
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                       ),
 
                       const SizedBox(height: 8),
 
-                      const Text(
-                        "• Meningkatkan semangat inovasi dan kreativitas di kalangan mahasiswa.\n"
-                        "• Memperkenalkan hasil penelitian dan pengembangan teknologi terbaru.\n"
-                        "• Memberikan wawasan kepada masyarakat luas.\n"
-                        "• Menjalin koneksi antara kampus, industri, dan alumni.\n"
-                        "• Memberikan inspirasi bagi generasi muda untuk terus berkreasi.",
-                        style: TextStyle(height: 1.5),
+                      Text(
+                        tujuan != null && tujuan!.trim().isNotEmpty
+                            ? tujuan!
+                            : 'Tidak ada tujuan kegiatan yang disediakan.',
+                        style: const TextStyle(height: 1.5),
                       ),
 
                       const SizedBox(height: 80),
