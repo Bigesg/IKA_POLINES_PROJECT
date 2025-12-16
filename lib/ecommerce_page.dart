@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'ecommerce_detail_page.dart';
 
@@ -14,6 +15,9 @@ class _EcommercePageState extends State<EcommercePage> {
   List<dynamic> koperasiList = [];
   bool isLoading = true;
   bool isError = false;
+  static const String baseApiUrl =
+      "http://127.0.0.1:8000/api/galeri";
+    static const String serverBase = "http://127.0.0.1:8000";
 
   @override
   void initState() {
@@ -23,36 +27,100 @@ class _EcommercePageState extends State<EcommercePage> {
 
   Future<void> fetchKoperasi() async {
     try {
-      final response = await http.get(
-        // Ganti sesuai kebutuhan:
-        // Android Emulator: http://10.0.2.2:8000/api/galeri
-        // Device Fisik: http://192.168.x.x:8000/api/galeri (ganti dengan IP komputer kamu)
-        Uri.parse("http://127.0.0.1:8000/api/galeri"),
-      );
-
-      print('Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
+      final response = await http.get(Uri.parse(baseApiUrl));
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-        
+        // debug: print small portion of response and foto fields
+        // ignore: avoid_print
+        print('fetchKoperasi: response length=${response.body.length}');
+        try {
+          // ignore: avoid_print
+          print('fetchKoperasi sample: ${response.body.length > 500 ? response.body.substring(0, 500) + "..." : response.body}');
+        } catch (_) {}
+        final list = jsonData['data'] ?? [];
+        for (var item in list) {
+          // ignore: avoid_print
+          print('item foto raw: ${item["foto"]}');
+        }
         setState(() {
-          koperasiList = jsonData['data'] ?? [];
+          koperasiList = list;
           isLoading = false;
         });
       } else {
-        setState(() {
-          isError = true;
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print('Error: $e');
-      setState(() {
         isError = true;
         isLoading = false;
-      });
+        setState(() {});
+      }
+    } catch (e) {
+      isError = true;
+      isLoading = false;
+      setState(() {});
     }
+  }
+
+  /// Widget gambar AMAN (tidak crash & tidak double URL)
+  Widget buildImage(String? url) {
+    if (url == null || url.isEmpty) {
+      return const Icon(Icons.image_not_supported, size: 60);
+    }
+
+    // jika URL lengkap (http/https) gunakan network image
+    if (url.startsWith('http')) {
+      return Image.network(
+        url,
+        height: 60,
+        fit: BoxFit.contain,
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return const SizedBox(
+            height: 60,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          );
+        },
+        errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 60),
+      );
+    }
+
+    // jika path aset lokal diberikan
+    if (url.contains('assets/') || url.contains('asset/')) {
+      try {
+        return Image.asset(url, height: 60, fit: BoxFit.contain);
+      } catch (_) {
+        return const Icon(Icons.broken_image, size: 60);
+      }
+    }
+
+    // fallback: tampilkan ikon, karena URL bukan http dan bukan asset
+    return const Icon(Icons.broken_image, size: 60);
+  }
+
+  /// Normalisasi URL gambar: tambahkan host jika path relatif,
+  /// dan sesuaikan host lokal untuk environment (web vs emulator).
+  String? resolveImageUrl(String? url) {
+    if (url == null || url.isEmpty) return null;
+
+    var u = url;
+    if (u.startsWith('http')) {
+      if (kIsWeb) {
+        // replace 127.0.0.1 with localhost for browser
+        u = u.replaceFirst('127.0.0.1', 'localhost');
+      }
+      return u;
+    }
+
+    // path relatif dari API, pastikan ada leading slash
+    if (!u.startsWith('/')) u = '/$u';
+
+    // untuk web kita gunakan serverBase tapi ganti host ke localhost
+    if (kIsWeb) {
+      return serverBase.replaceFirst('127.0.0.1', 'localhost') + u;
+    }
+
+    // untuk emulator Android, 127.0.0.1 pada kode server seharusnya
+    // diganti ke 10.0.2.2; namun gunakan serverBase default agar
+    // developer bisa menyesuaikan sesuai environment mereka.
+    return serverBase + u;
   }
 
   @override
@@ -118,6 +186,11 @@ class _EcommercePageState extends State<EcommercePage> {
                           ),
                           itemBuilder: (_, index) {
                             final data = koperasiList[index];
+                            final resolved = resolveImageUrl(data["foto"]);
+                            // debug: lihat URL yang akan dimuat
+                            // (akan muncul di console saat debugging)
+                            // ignore: avoid_print
+                            print('resolved image url: $resolved');
 
                             return GestureDetector(
                               onTap: () {
@@ -125,7 +198,8 @@ class _EcommercePageState extends State<EcommercePage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => EcommerceDetailPage(
-                                        koperasiId: data["id"]),
+                                      koperasiId: data["id"],
+                                    ),
                                   ),
                                 );
                               },
@@ -144,17 +218,7 @@ class _EcommercePageState extends State<EcommercePage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    data["foto"] != null
-                                        ? Image.network(
-                                            "http://10.0.2.2:8000/storage/${data["foto"]}",
-                                            height: 60,
-                                            errorBuilder: (_, __, ___) =>
-                                                const Icon(Icons.image, size: 60),
-                                          )
-                                        : Image.asset(
-                                            "assets/images/ika.png",
-                                            height: 60,
-                                          ),
+                                    buildImage(resolved),
                                     const SizedBox(height: 8),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -164,15 +228,18 @@ class _EcommercePageState extends State<EcommercePage> {
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14),
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(height: 3),
                                     Text(
                                       data["updated_at"] ?? "",
                                       style: const TextStyle(
-                                          color: Colors.grey, fontSize: 11),
+                                        color: Colors.grey,
+                                        fontSize: 11,
+                                      ),
                                     ),
                                   ],
                                 ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'job_detail.dart';
 import 'background_decor.dart';
 import 'package:http/http.dart' as http;
@@ -21,6 +22,21 @@ class _JobListPageState extends State<JobListPage> {
   void initState() {
     super.initState();
     fetchJobs();
+  }
+
+  static const String serverBase = 'http://127.0.0.1:8000';
+
+  String? resolveImageUrl(String? url) {
+    if (url == null || url.isEmpty) return null;
+    var u = url;
+    if (u.startsWith('http')) {
+      if (kIsWeb) u = u.replaceFirst('127.0.0.1', 'localhost');
+      return u;
+    }
+    if (!u.startsWith('/')) u = '/$u';
+    if (kIsWeb) return serverBase.replaceFirst('127.0.0.1', 'localhost') + u;
+    // non-web (emulator/device) use emulator host so Android emulator can reach host
+    return serverBase.replaceFirst('127.0.0.1', '10.0.2.2') + u;
   }
 
   Future<void> fetchJobs() async {
@@ -160,7 +176,7 @@ class _JobListPageState extends State<JobListPage> {
                                               ClipRRect(
                                                 borderRadius: BorderRadius.circular(6),
                                                 child: Image.network(
-                                                  "http://10.0.2.2:8000/${job['gambar'] ?? ''}",
+                                                  resolveImageUrl(job['gambar']) ?? '',
                                                   height: 36,
                                                   width: 36,
                                                   fit: BoxFit.cover,
@@ -273,8 +289,8 @@ class _JobListPageState extends State<JobListPage> {
                                                       position: job['judul_loker'] ?? "-",
                                                       location: job['lokasi'] ?? "-",
                                                       tags: List<String>.from(job['tags'] ?? []),
-                                                      image: "http://10.0.2.2:8000/${job['gambar'] ?? ''}",
-                                                      headerImage: "http://10.0.2.2:8000/${job['header_image'] ?? ''}",
+                                                      image: resolveImageUrl(job['gambar']) ?? '',
+                                                      headerImage: resolveImageUrl(job['header_image']) ?? '',
                                                       applyUrl: job['apply_url'] ?? "-",
                                                       mapsUrl: job['maps_url'] ?? "-",
                                                     ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,6 +23,20 @@ class _EcommerceDetailPageState extends State<EcommerceDetailPage> {
   void initState() {
     super.initState();
     koperasiFuture = fetchKoperasiDetail(widget.koperasiId);
+  }
+
+  static const String serverBase = 'http://127.0.0.1:8000';
+
+  String? resolveImageUrl(String? url) {
+    if (url == null || url.isEmpty) return null;
+    var u = url;
+    if (u.startsWith('http')) {
+      if (kIsWeb) u = u.replaceFirst('127.0.0.1', 'localhost');
+      return u;
+    }
+    if (!u.startsWith('/')) u = '/$u';
+    if (kIsWeb) return serverBase.replaceFirst('127.0.0.1', 'localhost') + u;
+    return serverBase.replaceFirst('127.0.0.1', '10.0.2.2') + u;
   }
 
   // ===================== API CONNECT =====================
@@ -92,10 +107,17 @@ class _EcommerceDetailPageState extends State<EcommerceDetailPage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: Image.network(
-                        koperasi["image"] ?? "",
+                        resolveImageUrl(koperasi["image"]) ?? '',
                         width: double.infinity,
                         height: screenWidth * 0.5,
                         fit: BoxFit.contain,
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return const SizedBox(
+                            height: 120,
+                            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                          );
+                        },
                         errorBuilder: (_, __, ___) => const Icon(
                           Icons.broken_image,
                           size: 120,
@@ -195,9 +217,16 @@ class _EcommerceDetailPageState extends State<EcommerceDetailPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image.network(
-                                      mitra["image"] ?? "",
+                                      resolveImageUrl(mitra["image"]) ?? '',
                                       height: 60,
                                       fit: BoxFit.contain,
+                                      loadingBuilder: (context, child, progress) {
+                                        if (progress == null) return child;
+                                        return const SizedBox(
+                                          height: 60,
+                                          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                                        );
+                                      },
                                       errorBuilder: (_, __, ___) =>
                                           const Icon(Icons.store, size: 50),
                                     ),
@@ -264,9 +293,16 @@ class _EcommerceDetailPageState extends State<EcommerceDetailPage> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  mitra["image"] ?? "",
+                  resolveImageUrl(mitra["image"]) ?? '',
                   height: 90,
                   fit: BoxFit.contain,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return const SizedBox(
+                      height: 90,
+                      child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    );
+                  },
                   errorBuilder: (_, __, ___) =>
                       const Icon(Icons.store, size: 80),
                 ),
