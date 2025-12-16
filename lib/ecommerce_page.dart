@@ -24,13 +24,20 @@ class _EcommercePageState extends State<EcommercePage> {
   Future<void> fetchKoperasi() async {
     try {
       final response = await http.get(
-        Uri.parse("http://127.0.0.1:8000/api/galeri"), 
-        // GANTI dengan IP & endpoint Laravel milikmu
+        // Ganti sesuai kebutuhan:
+        // Android Emulator: http://10.0.2.2:8000/api/galeri
+        // Device Fisik: http://192.168.x.x:8000/api/galeri (ganti dengan IP komputer kamu)
+        Uri.parse("http://127.0.0.1:8000/api/galeri"),
       );
 
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        
         setState(() {
-          koperasiList = jsonDecode(response.body);
+          koperasiList = jsonData['data'] ?? [];
           isLoading = false;
         });
       } else {
@@ -40,6 +47,7 @@ class _EcommercePageState extends State<EcommercePage> {
         });
       }
     } catch (e) {
+      print('Error: $e');
       setState(() {
         isError = true;
         isLoading = false;
@@ -62,7 +70,6 @@ class _EcommercePageState extends State<EcommercePage> {
         elevation: 0,
         centerTitle: true,
       ),
-
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : isError
@@ -83,7 +90,6 @@ class _EcommercePageState extends State<EcommercePage> {
                           ),
                         ),
                       ),
-
                       const Text(
                         "IKA POLINES PARTNER",
                         style: TextStyle(
@@ -118,8 +124,8 @@ class _EcommercePageState extends State<EcommercePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                        EcommerceDetailPage(koperasiId: data["id"]),
+                                    builder: (_) => EcommerceDetailPage(
+                                        koperasiId: data["id"]),
                                   ),
                                 );
                               },
@@ -127,7 +133,7 @@ class _EcommercePageState extends State<EcommercePage> {
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Colors.black12,
                                       blurRadius: 6,
@@ -138,28 +144,33 @@ class _EcommercePageState extends State<EcommercePage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    data["image_url"] != null
+                                    data["foto"] != null
                                         ? Image.network(
-                                            data["image_url"],
+                                            "http://10.0.2.2:8000/storage/${data["foto"]}",
                                             height: 60,
                                             errorBuilder: (_, __, ___) =>
-                                                const Icon(Icons.image),
+                                                const Icon(Icons.image, size: 60),
                                           )
                                         : Image.asset(
                                             "assets/images/ika.png",
                                             height: 60,
                                           ),
                                     const SizedBox(height: 8),
-                                    Text(
-                                      data["name"] ?? "-",
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      child: Text(
+                                        data["judul"] ?? "-",
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14),
+                                      ),
                                     ),
                                     const SizedBox(height: 3),
                                     Text(
-                                      data["updated"] ?? "",
+                                      data["updated_at"] ?? "",
                                       style: const TextStyle(
                                           color: Colors.grey, fontSize: 11),
                                     ),
