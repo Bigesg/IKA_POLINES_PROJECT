@@ -12,10 +12,21 @@ class JobDetailPage extends StatefulWidget {
   final String position;
   final String location;
   final List<String> tags;
-  final String image;
+  final String image; // job image or company logo/url
   final String? headerImage;
   final String? applyUrl;
   final String? mapsUrl;
+
+  // Additional dynamic fields from perusahaan
+  final String? companyLogo;
+  final String? rating;
+  final String? tentangKami;
+  final String? visi;
+  final String? misi;
+  // Job detail fields
+  final String? deskripsiPekerjaan;
+  final String? jobRequirement;
+  final String? requiredSkill;
 
   const JobDetailPage({
     super.key,
@@ -27,6 +38,14 @@ class JobDetailPage extends StatefulWidget {
     this.headerImage,
     this.applyUrl,
     this.mapsUrl,
+    this.companyLogo,
+    this.rating,
+    this.tentangKami,
+    this.visi,
+    this.misi,
+    this.deskripsiPekerjaan,
+    this.jobRequirement,
+    this.requiredSkill,
   });
 
   @override
@@ -121,8 +140,12 @@ class _JobDetailPageState extends State<JobDetailPage>
         children: [
           CircleAvatar(
             radius: 35,
-            backgroundImage: AssetImage(widget.image),
             backgroundColor: Colors.grey.shade200,
+            backgroundImage: widget.companyLogo != null && widget.companyLogo!.isNotEmpty
+                ? NetworkImage(widget.companyLogo!) as ImageProvider
+                : (widget.image.isNotEmpty
+                    ? NetworkImage(widget.image)
+                    : null),
           ),
           const SizedBox(height: 10),
           Text(
@@ -136,24 +159,26 @@ class _JobDetailPageState extends State<JobDetailPage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ...List.generate(5, (index) {
-                return Icon(
-                  index < 4 
-                      ? Icons.star
-                      : Icons.star_half,
-                  color: Colors.amber,
-                  size: 16,
-                );
+                // show filled stars based on rating if available
+                final r = double.tryParse(widget.rating ?? '0') ?? 0.0;
+                if (index + 1 <= r.floor()) {
+                  return const Icon(Icons.star, color: Colors.amber, size: 16);
+                } else if (index < r && r - r.floor() >= 0.5) {
+                  return const Icon(Icons.star_half, color: Colors.amber, size: 16);
+                } else {
+                  return const Icon(Icons.star_border, color: Colors.amber, size: 16);
+                }
               }),
               const SizedBox(width: 5),
-              const Text(
-                '4.9 (349 ratings)',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+              Text(
+                widget.rating != null ? '${widget.rating} (ratings)' : '-',
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
             ],
           ),
           const SizedBox(height: 4),
           Text(
-            'Creatio Studio • ${widget.location}',
+            '${widget.location}',
             style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
           ),
         ],
@@ -219,27 +244,18 @@ class _JobDetailPageState extends State<JobDetailPage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionTitleNew('TENTANG KAMI'),
-        _textBlock(
-          'Perusahaan ini adalah salah satu pemimpin di bidang teknologi modern, fokus pada inovasi dan pengembangan solusi digital yang berdampak positif bagi masyarakat.',
-        ),
+        _textBlock(widget.tentangKami ?? 'Tidak ada informasi tentang perusahaan.'),
         const SizedBox(height: 16),
 
         _infoGrid(),
         const SizedBox(height: 16),
 
         _sectionTitleNew('VISI'),
-        _textBlock(
-          'Mengorganisasi informasi dunia dan membuatnya dapat diakses serta berguna bagi semua orang.',
-        ),
+        _textBlock(widget.visi ?? '-'),
         const SizedBox(height: 10),
 
         _sectionTitleNew('MISI'),
-        _textBlock(
-          '1. Memberikan akses informasi yang cepat dan relevan.\n'
-          '2. Mendorong inovasi teknologi melalui kecerdasan buatan.\n'
-          '3. Memberdayakan individu dan bisnis melalui produk digital.\n'
-          '4. Membangun ekosistem kerja yang kreatif, inklusif, dan kolaboratif.',
-        ),
+        _textBlock(widget.misi ?? '-'),
 
         const SizedBox(height: 40),
       ],
@@ -331,9 +347,7 @@ class _JobDetailPageState extends State<JobDetailPage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _sectionTitleNew('DESKRIPSI PEKERJAAN'),
-        _textBlock(
-          'Sebagai ${widget.position} di ${widget.company}, Anda akan berkontribusi dalam merancang, mengembangkan, dan mengoptimalkan produk digital yang digunakan oleh jutaan pengguna di seluruh dunia.',
-        ),
+        _textBlock(widget.deskripsiPekerjaan ?? 'Sebagai ${widget.position} di ${widget.company}, Anda akan berkontribusi dalam merancang, mengembangkan, dan mengoptimalkan produk digital yang digunakan oleh jutaan pengguna di seluruh dunia.'),
         const SizedBox(height: 16),
         
         // TOMBOL APPLY NOW MENGARAH KE WHATSAPP
@@ -341,24 +355,43 @@ class _JobDetailPageState extends State<JobDetailPage>
         const SizedBox(height: 16),
         
         _sectionTitleNew('JOB REQUIREMENT'),
-        _textBlock(
-          '• S1 Teknik Informatika / Ilmu Komputer\n'
-          '• Pengalaman 1–3 tahun dalam pengembangan software\n'
-          '• Pemahaman mendalam tentang struktur data dan algoritma\n'
-          '• Kemampuan kolaborasi dan komunikasi yang kuat',
-        ),
+        if (widget.jobRequirement != null && widget.jobRequirement!.trim().isNotEmpty)
+          _bulletListFromText(widget.jobRequirement!)
+        else
+          _textBlock('• S1 Teknik Informatika / Ilmu Komputer\n• Pengalaman 1–3 tahun dalam pengembangan software\n• Pemahaman mendalam tentang struktur data dan algoritma\n• Kemampuan kolaborasi dan komunikasi yang kuat'),
         const SizedBox(height: 16),
         
         _sectionTitleNew('REQUIRED SKILL'),
-        _textBlock(
-          '• Bahasa pemrograman: Python, Java, Go, C++\n'
-          '• Cloud computing (Google Cloud, AWS)\n'
-          '• Git, REST API, dan sistem terdistribusi\n'
-          '• Machine Learning dan AI menjadi nilai tambah',
-        ),
+        if (widget.requiredSkill != null && widget.requiredSkill!.trim().isNotEmpty)
+          _bulletListFromText(widget.requiredSkill!)
+        else
+          _textBlock('• Bahasa pemrograman: Python, Java, Go, C++\n• Cloud computing (Google Cloud, AWS)\n• Git, REST API, dan sistem terdistribusi\n• Machine Learning dan AI menjadi nilai tambah'),
         
         const SizedBox(height: 40),
       ],
+    );
+  }
+
+  // Convert newline-separated text into bullet list widgets
+  Widget _bulletListFromText(String text) {
+    final lines = text.split(RegExp(r'\r?\n')).map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    if (lines.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: lines.map((line) {
+        // remove leading bullet char if present
+        final cleaned = line.replaceFirst(RegExp(r'^\s*[•\-*]\s*'), '');
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('• ', style: TextStyle(fontSize: 14, color: Colors.grey)),
+              Expanded(child: Text(cleaned, style: TextStyle(color: Colors.grey.shade700, height: 1.4))),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
   

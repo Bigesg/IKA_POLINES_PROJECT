@@ -120,12 +120,20 @@ class _JobListPageState extends State<JobListPage> {
         builder: (_) => JobDetailPage(
           company: job['perusahaan']['nama_perusahaan'] ?? "-",
           position: job['judul_loker'] ?? "-",
-          location: job['lokasi'] ?? "-",
+          location: job['lokasi'] ?? job['perusahaan']?['lokasi'] ?? "-",
           tags: List<String>.from(job['tags'] ?? []),
           image: resolveImageUrl(job['gambar']) ?? '',
           headerImage: resolveImageUrl(job['header_image']) ?? '',
           applyUrl: job['apply_url'] ?? "-",
           mapsUrl: job['maps_url'] ?? "-",
+          companyLogo: resolveImageUrl(job['perusahaan']?['logo']),
+          rating: job['perusahaan']?['rating']?.toString(),
+          tentangKami: job['perusahaan']?['tentang_kami'],
+          visi: job['perusahaan']?['visi'],
+          misi: job['perusahaan']?['misi'],
+          deskripsiPekerjaan: job['deskripsi_pekerjaan'],
+          jobRequirement: job['job_requirement'],
+          requiredSkill: job['required_skill'],
         ),
       ),
     );
@@ -332,10 +340,10 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String companyName = job['perusahaan']['nama_perusahaan'] ?? "-";
-    final String location = job['lokasi'] ?? "-";
+    final String companyName = job['perusahaan']?['nama_perusahaan'] ?? "-";
+    final String location = job['lokasi'] ?? job['perusahaan']?['lokasi'] ?? "-";
     final String role = job['judul_loker'] ?? "-";
-    final String imageUrl = resolveImageUrl(job['gambar']) ?? '';
+    final String imageUrl = resolveImageUrl(job['perusahaan']?['logo'] ?? job['gambar']) ?? '';
     final String timeAgo = _formatDate(job['created_at']?.toString() ?? job['tanggal']);
 
 

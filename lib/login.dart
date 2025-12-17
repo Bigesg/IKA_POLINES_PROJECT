@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'background_decor.dart';
 import 'dart:ui';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'profile.dart';
 
 
 /// =============================================================
@@ -166,6 +170,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _ktaController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   // --- Fungsi Dialog Pop-up (DIPERBAIKI UNTUK MENGHILANGKAN UNDERLINE) ---
   void _showSuccessDialog() {
@@ -236,10 +241,7 @@ class _LoginPageState extends State<LoginPage> {
       barrierLabel: "Success dialog", // Added barrierLabel to fix the assertion error
     );
 
-    Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pop(context);
-      Navigator.pushReplacementNamed(context, '/main'); 
-    });
+    // dialog stays visible; caller will close it and navigate as needed
   }
 
   void _showErrorDialog() {
@@ -313,14 +315,48 @@ class _LoginPageState extends State<LoginPage> {
 
 
   // --- Fungsi Utama Login ---
-  void _login() {
+  Future<void> _login() async {
     final kta = _ktaController.text.trim();
     final password = _passwordController.text.trim();
 
-    if (kta.isNotEmpty && password.isNotEmpty) {
-      _showSuccessDialog();
-    } else {
+    if (kta.isEmpty || password.isEmpty) {
       _showErrorDialog();
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      final uri = Uri.parse('http://127.0.0.1:8000/api/login');
+      final response = await http.post(uri, body: {
+        'login': kta,
+        'password': password,
+      });
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          _showSuccessDialog();
+          // close dialog and navigate after a short delay so dialog is visible briefly
+          Future.delayed(const Duration(milliseconds: 900), () {
+            Navigator.pop(context); // close dialog
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProfilePage(user: data['data']),
+              ),
+            );
+          });
+        } else {
+          _showErrorDialog();
+        }
+      } else {
+        _showErrorDialog();
+      }
+    } catch (e) {
+      if (kDebugMode) print('Login error: $e');
+      _showErrorDialog();
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -415,7 +451,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _login,
+                      onPressed: _isLoading ? null : _login,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
                       foregroundColor: Colors.white,
@@ -424,11 +460,16 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Text(
-                      "Masuk",
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            )
+                          : const Text(
+                              "Masuk",
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
                   ),
                 ),
 

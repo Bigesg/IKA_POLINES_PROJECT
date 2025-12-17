@@ -4,7 +4,8 @@ import 'Ganti_Kata_Sandi.dart';
 import 'chat_dengan_admin.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  final Map<String, dynamic>? user;
+  const ProfilePage({super.key, this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -97,19 +98,19 @@ class ProfilePage extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 4),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text(
-                                'Bagas Prasetyo',
-                                style: TextStyle(
+                                user != null ? (user!['nama_alumni'] ?? user!['nama_lengkap'] ?? 'Nama Alumni') : 'Bagas Prasetyo',
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xFF1F2937),
                                 ),
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
-                                'IKA-POLINES-YY-XXXXXX',
-                                style: TextStyle(
+                                user != null ? (user!['nomor_kta'] ?? user!['username'] ?? 'IKA-POLINES-YY-XXXXXX') : 'IKA-POLINES-YY-XXXXXX',
+                                style: const TextStyle(
                                   fontSize: 11,
                                   color: Colors.black54,
                                 ),
