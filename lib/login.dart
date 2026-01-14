@@ -326,9 +326,9 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() => _isLoading = true);
     try {
-      final uri = Uri.parse('http://127.0.0.1:8000/api/login');
+      final uri = Uri.parse('http://127.0.0.1:8000/api/login-alumni');
       final response = await http.post(uri, body: {
-        'login': kta,
+        'no_kta': kta,
         'password': password,
       });
 
@@ -612,4 +612,3 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 }
-
