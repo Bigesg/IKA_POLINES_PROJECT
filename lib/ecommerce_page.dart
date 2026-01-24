@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'utils/api_helper.dart';
 import 'package:http/http.dart' as http;
 import 'ecommerce_detail_page.dart';
@@ -16,7 +15,8 @@ class _EcommercePageState extends State<EcommercePage> {
   List<dynamic> koperasiList = [];
   bool isLoading = true;
   bool isError = false;
-  static String get baseApiUrl => ApiHelper.apiUrl('/api/galeri');
+  String? errorMessage;
+  static String get baseApiUrl => ApiHelper.apiUrl('/galeri');
 
   @override
   void initState() {
@@ -26,35 +26,51 @@ class _EcommercePageState extends State<EcommercePage> {
 
   Future<void> fetchKoperasi() async {
     try {
-      final response = await http.get(Uri.parse(baseApiUrl));
+      // ignore: avoid_print
+      print("🔄 Fetching from: $baseApiUrl");
+
+      final response = await http.get(Uri.parse(baseApiUrl)).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception("Request timeout - Server tidak merespons"),
+      );
+
+      // ignore: avoid_print
+      print("📊 Response status: ${response.statusCode}");
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-        // debug: print small portion of response and foto fields
         // ignore: avoid_print
-        print('fetchKoperasi: response length=${response.body.length}');
-        try {
-          // ignore: avoid_print
-          print('fetchKoperasi sample: ${response.body.length > 500 ? response.body.substring(0, 500) + "..." : response.body}');
-        } catch (_) {}
-        final list = jsonData['data'] ?? [];
+        print("✅ Response received, data count: ${jsonData['data']?.length ?? 0}");
+
+        final list = (jsonData['data'] ?? []) as List;
+
         for (var item in list) {
           // ignore: avoid_print
-          print('item foto raw: ${item["foto"]}');
+          print("📷 Item foto: ${item["foto"]}");
         }
+
         setState(() {
           koperasiList = list;
           isLoading = false;
+          isError = false;
         });
       } else {
-        isError = true;
-        isLoading = false;
-        setState(() {});
+        // ignore: avoid_print
+        print("❌ Status code: ${response.statusCode}, Body: ${response.body}");
+        setState(() {
+          isError = true;
+          isLoading = false;
+          errorMessage = "Server error: ${response.statusCode}";
+        });
       }
     } catch (e) {
-      isError = true;
-      isLoading = false;
-      setState(() {});
+      // ignore: avoid_print
+      print("❌ Error: $e");
+      setState(() {
+        isError = true;
+        isLoading = false;
+        errorMessage = e.toString();
+      });
     }
   }
 
@@ -64,7 +80,6 @@ class _EcommercePageState extends State<EcommercePage> {
       return const Icon(Icons.image_not_supported, size: 60);
     }
 
-    // jika URL lengkap (http/https) gunakan network image
     if (url.startsWith('http')) {
       return Image.network(
         url,
@@ -81,7 +96,6 @@ class _EcommercePageState extends State<EcommercePage> {
       );
     }
 
-    // jika path aset lokal diberikan
     if (url.contains('assets/') || url.contains('asset/')) {
       try {
         return Image.asset(url, height: 60, fit: BoxFit.contain);
@@ -90,12 +104,10 @@ class _EcommercePageState extends State<EcommercePage> {
       }
     }
 
-    // fallback: tampilkan ikon, karena URL bukan http dan bukan asset
     return const Icon(Icons.broken_image, size: 60);
   }
 
-  /// Normalisasi URL gambar: tambahkan host jika path relatif,
-  /// dan sesuaikan host lokal untuk environment (web vs emulator).
+  /// Normalisasi URL gambar
   String? resolveImageUrl(String? url) => ApiHelper.resolveImageUrl(url);
 
   @override
@@ -106,7 +118,7 @@ class _EcommercePageState extends State<EcommercePage> {
       backgroundColor: const Color(0xFFF2F8F8),
       appBar: AppBar(
         title: const Text(
-          "E-Commerce Koperasi",
+          "Galeri Bisnis Alumni",
           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.white,
@@ -116,7 +128,34 @@ class _EcommercePageState extends State<EcommercePage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : isError
-              ? const Center(child: Text("Gagal memuat data dari server"))
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.wifi_off, size: 60, color: Colors.red),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Gagal memuat data dari server",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          errorMessage ?? "Unknown error",
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton.icon(
+                          onPressed: fetchKoperasi,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text("Coba Lagi"),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               : SingleChildScrollView(
                   child: Column(
                     children: [
@@ -134,9 +173,8 @@ class _EcommercePageState extends State<EcommercePage> {
                         ),
                       ),
                       const Text(
-                        "IKA POLINES PARTNER",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w600),
+                        "Galeri Bisnis Alumni Polines",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 4),
                       const Text(
@@ -152,28 +190,40 @@ class _EcommercePageState extends State<EcommercePage> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: koperasiList.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
                             childAspectRatio: 0.9,
                           ),
                           itemBuilder: (_, index) {
-                            final data = koperasiList[index];
-                            final resolved = resolveImageUrl(data["foto"]);
-                            // debug: lihat URL yang akan dimuat
-                            // (akan muncul di console saat debugging)
+                            final data = (koperasiList[index] as Map).cast<String, dynamic>();
+                            final resolved = resolveImageUrl(data["foto"]?.toString());
+
                             // ignore: avoid_print
                             print('resolved image url: $resolved');
 
                             return GestureDetector(
                               onTap: () {
+                                final rawId = data["id"];
+                                final id = int.tryParse(rawId.toString());
+
+                                // ignore: avoid_print
+                                print("👉 Tap koperasi id: $rawId | parsed: $id");
+
+                                if (id == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("ID koperasi kosong/tidak valid")),
+                                  );
+                                  return;
+                                }
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => EcommerceDetailPage(
-                                      koperasiId: data["id"],
+                                      koperasiId: id,
+                                      koperasiData: data, // <-- penting: kirim data awal
                                     ),
                                   ),
                                 );
@@ -198,7 +248,7 @@ class _EcommercePageState extends State<EcommercePage> {
                                     Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 8),
                                       child: Text(
-                                        data["judul"] ?? "-",
+                                        (data["judul"] ?? data["name"] ?? "-").toString(),
                                         textAlign: TextAlign.center,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -210,7 +260,7 @@ class _EcommercePageState extends State<EcommercePage> {
                                     ),
                                     const SizedBox(height: 3),
                                     Text(
-                                      data["updated_at"] ?? "",
+                                      (data["updated_at"] ?? "").toString(),
                                       style: const TextStyle(
                                         color: Colors.grey,
                                         fontSize: 11,
