@@ -5,7 +5,7 @@ class TentangIKAPage extends StatelessWidget {
   const TentangIKAPage({super.key});
 
   void _launchWhatsApp() async {
-    const whatsappUrl = "https://wa.me/6281234567890"; // Ganti dengan nomor WhatsApp
+    const whatsappUrl = "https://ikapolines.or.id"; // Ganti dengan nomor WhatsApp
     if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
       await launchUrl(Uri.parse(whatsappUrl), mode: LaunchMode.externalApplication);
     }
