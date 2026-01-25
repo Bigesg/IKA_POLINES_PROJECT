@@ -5,7 +5,7 @@ class ChatDenganAdminPage extends StatelessWidget {
   const ChatDenganAdminPage({super.key});
 
   void _launchWhatsApp() async {
-    const whatsappUrl = "https://wa.me/6281234567890"; // Ganti dengan nomor WhatsApp admin
+    const whatsappUrl = "https://wa.me/6282147990955"; // Ganti dengan nomor WhatsApp admin
     if (await canLaunchUrl(Uri.parse(whatsappUrl))) {
       await launchUrl(Uri.parse(whatsappUrl), mode: LaunchMode.externalApplication);
     }
