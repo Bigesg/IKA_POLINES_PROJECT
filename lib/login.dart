@@ -5,8 +5,7 @@ import 'dart:ui';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'profile.dart';
-
+import 'home.dart';
 
 /// =============================================================
 /// 1. STYLE KONSTANTA & DECORATION
@@ -339,12 +338,14 @@ class _LoginPageState extends State<LoginPage> {
           // close dialog and navigate after a short delay so dialog is visible briefly
           Future.delayed(const Duration(milliseconds: 900), () {
             Navigator.pop(context); // close dialog
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ProfilePage(user: data['data']),
-              ),
-            );
+            Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (_) => HomePage(user: data['data']),
+            ),
+            (route) => false,
+          );
+
           });
         } else {
           _showErrorDialog();

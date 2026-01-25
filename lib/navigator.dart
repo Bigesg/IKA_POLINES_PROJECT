@@ -16,8 +16,8 @@ class _MainAppNavigatorState extends State<MainAppNavigator> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    const HomePage(), // Home
-    EcommercePage(), // E-commerce
+    const HomePage(user: {}), // Home
+    const EcommercePage(), // E-commerce
     const EventPage(), // Event
     const JobListPage(), // Loker
     const ProfilePage(), // Profile

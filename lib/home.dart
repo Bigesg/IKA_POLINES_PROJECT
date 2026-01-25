@@ -8,11 +8,20 @@ import 'notification_service.dart'; // Import notification service
 import 'notification_page.dart'; // Import notification page
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final Map<String, dynamic> user;
+
+  const HomePage({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
+
+  @override
+  State<HomePage> createState() => _HomePageState();
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _bannerIndex = 0;
