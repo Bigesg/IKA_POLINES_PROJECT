@@ -115,7 +115,7 @@ class ProfilePage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              user != null ? (user!['nama_alumni'] ?? user!['nama_lengkap'] ?? 'Nama Alumni') : 'Bagas Prasetyo',
+                              user != null ? (user!['nama_alumni'] ?? user!['nama_lengkap'] ?? 'Nama Alumni') : 'Sheva Zanuar',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -132,7 +132,7 @@ class ProfilePage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                user != null ? (user!['nomor_kta'] ?? user!['username'] ?? 'IKA-POLINES-YY-XXXXXX') : 'IKA-POLINES-YY-XXXXXX',
+                                user != null ? (user!['nomor_kta'] ?? user!['username'] ?? '202603001') : '202603001',
                                 style: const TextStyle(
                                   fontSize: 11,
                                   color: accentGold,
@@ -323,3 +323,4 @@ class ProfilePage extends StatelessWidget {
     );
   }
 }
+
